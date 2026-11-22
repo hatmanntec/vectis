@@ -1,6 +1,7 @@
 import { Archive, ArchiveRestore, EyeOff, Send, Trash2 } from "lucide-react";
 import { ConfirmAction } from "@/components/cms/confirm-action";
-import { formatDateTime, type ContentStatus } from "@/lib/cms/status";
+import { ScheduleForm } from "@/components/cms/schedule-form";
+import { displayStatus, formatDateTime, type ContentStatus } from "@/lib/cms/status";
 import type { ActionResult } from "@/lib/cms/results";
 
 /**
@@ -15,6 +16,7 @@ export function PublishingPanel({
   remove,
   deleteWarning,
   publishWarning,
+  schedule,
 }: {
   /** e.g. "company", used in messages. */
   noun: string;
@@ -32,8 +34,11 @@ export function PublishingPanel({
   deleteWarning?: string;
   /** Shown above the Publish button, e.g. a reminder that the parent is unpublished. */
   publishWarning?: string;
+  /** Offer "publish at a chosen time" (scheduling and back-dating). `initial` is in Nigeria time. */
+  schedule?: { action: (prev: ActionResult | null, formData: FormData) => Promise<ActionResult>; initial: string };
 }) {
   const s = record.status;
+  const scheduled = displayStatus(s, record.published_at) === "Scheduled";
   return (
     <aside className="space-y-6">
       <section className="border border-border bg-white">
@@ -51,7 +56,32 @@ export function PublishingPanel({
               />
             </>
           ) : null}
-          {s === "published" ? (
+          {scheduled ? (
+            <>
+              <p className="mb-1 text-xs text-muted-foreground">
+                Scheduled: appears on the website on {formatDateTime(record.published_at)} (Nigeria time).
+              </p>
+              <ConfirmAction
+                action={setStatus.bind(null, "published")}
+                label="Publish now"
+                icon={<Send aria-hidden />}
+                variant="default"
+                successMessage="Published."
+              />
+              <ConfirmAction
+                action={setStatus.bind(null, "draft")}
+                label="Cancel schedule"
+                icon={<EyeOff aria-hidden />}
+                successMessage="Schedule cancelled; moved back to draft."
+                confirm={{
+                  title: `Cancel this ${noun}'s schedule?`,
+                  description: "It goes back to being a draft and won't appear on the website until you publish it.",
+                  confirmLabel: "Cancel schedule",
+                }}
+              />
+            </>
+          ) : null}
+          {s === "published" && !scheduled ? (
             <ConfirmAction
               action={setStatus.bind(null, "draft")}
               label="Unpublish"
@@ -62,6 +92,13 @@ export function PublishingPanel({
                 description: "It will disappear from the website until you publish it again.",
                 confirmLabel: "Unpublish",
               }}
+            />
+          ) : null}
+          {schedule && s !== "archived" ? (
+            <ScheduleForm
+              action={schedule.action}
+              initial={schedule.initial}
+              label={s === "draft" ? "Schedule or back-date…" : "Change publication date…"}
             />
           ) : null}
           {s !== "archived" ? (

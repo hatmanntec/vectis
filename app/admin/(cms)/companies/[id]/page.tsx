@@ -23,6 +23,8 @@ import { companyInvestments } from "@/features/investments/queries";
 import { CompanyInvestmentsPanel } from "@/features/investments/components/company-investments-panel";
 import { companyProjects } from "@/features/projects/queries";
 import { CompanyProjectsPanel } from "@/features/projects/components/company-projects-panel";
+import { companyNews } from "@/features/news/queries";
+import { CompanyNewsPanel } from "@/features/news/components/company-news-panel";
 
 export const metadata: Metadata = { title: "Edit company" };
 
@@ -39,7 +41,7 @@ async function Editor({ params }: { params: PageProps<"/admin/companies/[id]">["
   const company = await getCompany(id);
   if (!company) notFound();
 
-  const [companies, sectors, media, usage, relationships, gallery, documents, investments, projects] = await Promise.all([
+  const [companies, sectors, media, usage, relationships, gallery, documents, investments, projects, news] = await Promise.all([
     companyOptions(),
     sectorOptions(),
     getMediaByIds([company.logo_media_id, company.cover_media_id]),
@@ -49,6 +51,7 @@ async function Editor({ params }: { params: PageProps<"/admin/companies/[id]">["
     listAttachments("companies", company.id, "document"),
     companyInvestments(company.id),
     companyProjects(company.id),
+    companyNews(company.id),
   ]);
 
   const parent = companies.find((c) => c.id === company.parent_company_id);
@@ -96,6 +99,7 @@ async function Editor({ params }: { params: PageProps<"/admin/companies/[id]">["
             rows={investments}
           />
           <CompanyProjectsPanel companyId={company.id} rows={projects} />
+          <CompanyNewsPanel companyId={company.id} rows={news} />
           <AttachmentsPanel
             title="Gallery"
             description="Public photographs shown on the company's page, in this order."

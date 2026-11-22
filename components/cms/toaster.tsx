@@ -26,6 +26,7 @@ const NOTICES: Record<string, string> = {
   deleted: "Deleted permanently.",
   saved: "Saved.",
   created_sectors_failed: "Created, but the sectors couldn't be saved. Please tick them again below and save.",
+  created_tags_failed: "Created, but the company tags couldn't be saved. Please tick them again below and save.",
 };
 
 /**
@@ -41,7 +42,7 @@ export function NoticeFromUrl() {
   useEffect(() => {
     if (!notice) return;
     const text = NOTICES[notice];
-    if (text) toast.success(text);
+    if (text) (notice.endsWith("_failed") ? toast.warning : toast.success)(text);
     const sp = new URLSearchParams(searchParams.toString());
     sp.delete("notice");
     const s = sp.toString();

@@ -14,9 +14,35 @@ The running record of what has been built. Newest milestone first.
 | M5: Media Library and Settings | Done (22 Nov 2026) |
 | M6: Companies | Done (22 Nov 2026), includes database update 0017 |
 | M7: Investments | Done (22 Nov 2026), no database update |
-| M8: Projects | **Done** (22 Nov 2026), no database update |
-| M9: News & Media | Next |
-| M10–M11: remaining CMS modules | — |
+| M8: Projects | Done (22 Nov 2026), no database update |
+| M9: News & Media | **Done** (22 Nov 2026), no database update |
+| M10: Leadership, Website Pages, Enquiries | Next |
+| M11: Final CMS review and test pass | — |
+
+## M9: News & Media (22 Nov 2026)
+
+**Built**
+
+- **News & Media module** (`/admin/news`, `features/news/`)
+  - **Kinds:** article, press release, announcement, industry update, company news.
+  - Headline and web address (follows the headline until changed), author or source, excerpt, full text in the
+    formatted-text editor, cover image, gallery, supporting documents (e.g. the press release PDF) and search-engine fields.
+  - **Featured** switch, marked in the list and filterable.
+  - **Companies mentioned:** tick any number of companies (with a filter box when there are many). Archived companies
+    aren't offered, except ones already tagged. Visitors only see tags for published companies.
+  - **Scheduling and back-dating** (in the Publishing box, "Schedule or back-date…"): choose a date and time in
+    Nigeria time. A future time schedules the item: it shows as "Scheduled" and appears on the website by itself at
+    that moment, with nothing to run. A past time publishes it now with that date (for older press releases).
+    Scheduled items offer "Publish now" and "Cancel schedule"; published items offer "Change publication date…".
+  - **List:** filters for kind, status (draft / scheduled / published / archived) and featured; search by headline,
+    text or author; sort by publication date.
+- **Company pages** now list news tagged with the company (latest 20), with a "New item" button that pre-ticks it.
+- **Media library:** "Where it's used" now links to news items.
+- **Shared parts:** `components/cms/schedule-form.tsx`; the Publishing box takes an optional `schedule` setting.
+  Notices for partly failed saves now show as warnings.
+
+**Tested:** 45 new browser checks, including exact times (09:00 Nigeria time is saved as 08:00 UTC), an item appearing
+by itself when its time passes, and back-dating. All earlier suites re-run and passing.
 
 ## M8: Projects (22 Nov 2026)
 

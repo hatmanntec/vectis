@@ -125,7 +125,7 @@ export async function mediaUsage(id: string): Promise<MediaUse[]> {
   for (const r of companies.data ?? []) uses.push({ where: "Company logo or cover", name: r.name, href: `/admin/companies/${r.id}` });
   for (const r of investments.data ?? []) uses.push({ where: "Investment logo", name: r.slug, href: `/admin/investments/${r.id}` });
   for (const r of projects.data ?? []) uses.push({ where: "Project cover image", name: r.title, href: `/admin/projects/${r.id}` });
-  for (const r of news.data ?? []) uses.push({ where: "News", name: r.title, href: null });
+  for (const r of news.data ?? []) uses.push({ where: "News cover image", name: r.title, href: `/admin/news/${r.id}` });
   for (const r of leadership.data ?? []) uses.push({ where: "Leadership", name: r.full_name, href: null });
   for (const r of sectors.data ?? []) uses.push({ where: "Sector cover image", name: r.name, href: `/admin/sectors/${r.id}` });
   for (const r of pages.data ?? []) uses.push({ where: "Website page", name: r.title, href: null });
@@ -139,6 +139,8 @@ export async function mediaUsage(id: string): Promise<MediaUse[]> {
     const where = r.role === "gallery" ? "Gallery image" : "Supporting document";
     if (r.company_id) {
       uses.push({ where: `${where} (company)`, name: companyName.get(r.company_id) ?? "A company", href: `/admin/companies/${r.company_id}` });
+    } else if (r.news_id) {
+      uses.push({ where: `${where} (news)`, name: "A news item", href: `/admin/news/${r.news_id}` });
     } else if (r.project_id) {
       uses.push({ where: `${where} (project)`, name: "A project", href: `/admin/projects/${r.project_id}` });
     } else if (r.investment_id) {

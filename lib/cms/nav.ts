@@ -33,7 +33,7 @@ export const NAV: NavGroup[] = [
       { label: "Companies", href: "/admin/companies", icon: Building2, ready: true },
       { label: "Investments", href: "/admin/investments", icon: TrendingUp, ready: true },
       { label: "Projects", href: "/admin/projects", icon: Wrench, ready: true },
-      { label: "News & Media", href: "/admin/news", icon: Newspaper, ready: false, milestone: "M9" },
+      { label: "News & Media", href: "/admin/news", icon: Newspaper, ready: true },
       { label: "Leadership", href: "/admin/leadership", icon: Users, ready: false, milestone: "M10" },
       { label: "Website Pages", href: "/admin/pages", icon: FileText, ready: false, milestone: "M10" },
     ],
