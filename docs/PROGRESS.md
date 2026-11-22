@@ -13,9 +13,35 @@ The running record of what has been built. Newest milestone first.
 | M4: CMS shell, shared parts, Sectors, Audit log | Done (22 Nov 2026) |
 | M5: Media Library and Settings | Done (22 Nov 2026) |
 | M6: Companies | Done (22 Nov 2026), includes database update 0017 |
-| M7: Investments | **Done** (22 Nov 2026), no database update |
-| M8: Projects | Next |
-| M9–M11: remaining CMS modules | — |
+| M7: Investments | Done (22 Nov 2026), no database update |
+| M8: Projects | **Done** (22 Nov 2026), no database update |
+| M9: News & Media | Next |
+| M10–M11: remaining CMS modules | — |
+
+## M8: Projects (22 Nov 2026)
+
+**Built**
+
+- **Projects module** (`/admin/projects`, `features/projects/`)
+  - **Each project belongs to a business** under Companies, with an optional sector. Archived businesses and sectors
+    aren't offered, except one already chosen.
+  - **Stage** (planned / in progress / completed / on hold), optional start and end dates (the end can't be before
+    the start), summary and full description.
+  - **Location:** place name, state (all 36 Nigerian states and the FCT suggested; any text allowed), country
+    (Nigeria by default), and an optional map position (latitude and longitude, both or neither) for the future
+    project map.
+  - **Cover image, gallery and supporting documents**, display order and search-engine fields.
+  - **Timeline:** key stages with an optional date and details. Add, edit in place, move up and down, put in date
+    order with one click, and remove (after confirming). The timeline shows on the website only when the project does.
+  - **Publishing:** a project shows on the website only when it and its business are published; the panel says so
+    when the business is still a draft. Archive → delete permanently (the timeline goes with it).
+  - **List:** cover thumbnails; search by name, place, state or business name; filters (stage, website status); sorting.
+- **Company pages** now list the company's projects, with a "New project" button that presets the business.
+- **Media library:** "Where it's used" now links to projects.
+- `NameAndSlugFields` can now send the name under another field name (projects use `title`).
+
+**Tested:** 37 new browser checks; all earlier suites re-run and passing (database 60 + 9, sign-in 23, M4 45, M5 38,
+M6 34, M7 43).
 
 ## M7: Investments (22 Nov 2026)
 

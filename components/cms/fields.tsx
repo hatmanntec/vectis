@@ -149,7 +149,10 @@ export function NameAndSlugFields({
   slugError,
   urlPrefix,
   nameMax = 200,
+  nameField = "name",
 }: {
+  /** The form field the name is sent as (e.g. "title" for projects). */
+  nameField?: string;
   nameLabel: string;
   defaultName?: string;
   defaultSlug?: string;
@@ -169,7 +172,7 @@ export function NameAndSlugFields({
       <FieldShell id={nameId} label={nameLabel} required error={nameError} counter={<Counter length={name.length} max={nameMax} />}>
         <Input
           id={nameId}
-          name="name"
+          name={nameField}
           value={name}
           required
           aria-invalid={Boolean(nameError)}

@@ -21,6 +21,8 @@ import { getMediaByIds, listAttachments, toPicked } from "@/features/media/queri
 import { addMediaLink, moveMediaLink, removeMediaLink } from "@/features/media/link-actions";
 import { companyInvestments } from "@/features/investments/queries";
 import { CompanyInvestmentsPanel } from "@/features/investments/components/company-investments-panel";
+import { companyProjects } from "@/features/projects/queries";
+import { CompanyProjectsPanel } from "@/features/projects/components/company-projects-panel";
 
 export const metadata: Metadata = { title: "Edit company" };
 
@@ -37,7 +39,7 @@ async function Editor({ params }: { params: PageProps<"/admin/companies/[id]">["
   const company = await getCompany(id);
   if (!company) notFound();
 
-  const [companies, sectors, media, usage, relationships, gallery, documents, investments] = await Promise.all([
+  const [companies, sectors, media, usage, relationships, gallery, documents, investments, projects] = await Promise.all([
     companyOptions(),
     sectorOptions(),
     getMediaByIds([company.logo_media_id, company.cover_media_id]),
@@ -46,6 +48,7 @@ async function Editor({ params }: { params: PageProps<"/admin/companies/[id]">["
     listAttachments("companies", company.id, "gallery"),
     listAttachments("companies", company.id, "document"),
     companyInvestments(company.id),
+    companyProjects(company.id),
   ]);
 
   const parent = companies.find((c) => c.id === company.parent_company_id);
@@ -92,6 +95,7 @@ async function Editor({ params }: { params: PageProps<"/admin/companies/[id]">["
             canInvest={company.classification !== "external"}
             rows={investments}
           />
+          <CompanyProjectsPanel companyId={company.id} rows={projects} />
           <AttachmentsPanel
             title="Gallery"
             description="Public photographs shown on the company's page, in this order."
