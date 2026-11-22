@@ -18,3 +18,7 @@ next-env.d.ts
 # Operating system and log files
 .DS_Store
 npm-debug.log*
+
+# Supabase command-line working files (contain your project link, not code)
+supabase/.temp
+supabase/.branches
