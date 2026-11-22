@@ -1,6 +1,6 @@
 import { Logo } from "@/components/brand/logo";
 
-/** The frame shared by the login, two-step and password screens. */
+/** The frame shared by the login and password screens. */
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <main className="flex flex-1 flex-col">

@@ -9,10 +9,9 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
  * Works out, on the server, where the person stands:
  *   signed_out  no valid login
  *   not_admin   logged in, but not an active VECTIS administrator
- *   needs_mfa   an administrator who hasn't completed two-step login yet
- *   ok          an administrator with two-step login: full CMS access
+ *   ok          an active administrator: full CMS access
  *
- * The database applies the same rules again (Row Level Security), so even a
+ * The database applies the same rule again (Row Level Security), so even a
  * mistake here could not expose or change data.
  *
  * `cache` makes repeated calls in one request reuse the first answer.
@@ -28,7 +27,6 @@ export type AdminContext = {
 type AccessResult =
   | { status: "signed_out" }
   | { status: "not_admin" }
-  | { status: "needs_mfa" }
   | { status: "ok"; admin: AdminContext };
 
 export const getAdminAccess = cache(async (): Promise<AccessResult> => {
@@ -39,8 +37,7 @@ export const getAdminAccess = cache(async (): Promise<AccessResult> => {
   const claims = data?.claims;
   if (error || !claims?.sub) return { status: "signed_out" };
 
-  // Admins may always read their own profile (any login level), which lets us
-  // tell a non-admin apart from an admin who still needs two-step login.
+  // A signed-in person may read only their own admin profile.
   const { data: profile } = await supabase
     .from("admin_profiles")
     .select("full_name, role, is_active")
@@ -48,7 +45,6 @@ export const getAdminAccess = cache(async (): Promise<AccessResult> => {
     .maybeSingle();
 
   if (!profile || !profile.is_active) return { status: "not_admin" };
-  if (claims.aal !== "aal2") return { status: "needs_mfa" };
 
   return {
     status: "ok",
@@ -63,8 +59,8 @@ export const getAdminAccess = cache(async (): Promise<AccessResult> => {
 
 /**
  * Use at the top of every CMS page and every CMS server action.
- * Sends anyone without full access to the right place, otherwise returns
- * the administrator's details.
+ * Sends anyone without access to the right place, otherwise returns the
+ * administrator's details.
  */
 export async function requireAdmin(): Promise<AdminContext> {
   const access = await getAdminAccess();
@@ -73,8 +69,6 @@ export async function requireAdmin(): Promise<AdminContext> {
       redirect("/admin/login");
     case "not_admin":
       redirect("/admin/no-access");
-    case "needs_mfa":
-      redirect("/admin/verify");
     case "ok":
       return access.admin;
   }

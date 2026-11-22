@@ -28,9 +28,9 @@ async function Dashboard() {
         <div className="flex items-start gap-3">
           <ShieldCheck className="mt-0.5 size-5 shrink-0 text-teal" aria-hidden />
           <div className="space-y-1">
-            <h2 className="font-sans text-base font-semibold text-graphite">Secure sign-in is active</h2>
+            <h2 className="font-sans text-base font-semibold text-graphite">You are signed in securely</h2>
             <p className="text-sm text-muted-foreground">
-              Password and two-step verification confirmed. Every change you make will be recorded in the audit
+              Only active VECTIS administrators can use the CMS. Every change you make is recorded in the audit
               trail.
             </p>
           </div>

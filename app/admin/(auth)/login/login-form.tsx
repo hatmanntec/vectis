@@ -35,7 +35,7 @@ export function LoginForm() {
         <Input id="password" name="password" type="password" autoComplete="current-password" required />
       </div>
 
-      <SubmitButton pendingText="Signing in…">Continue</SubmitButton>
+      <SubmitButton pendingText="Signing in…">Sign in</SubmitButton>
     </form>
   );
 }

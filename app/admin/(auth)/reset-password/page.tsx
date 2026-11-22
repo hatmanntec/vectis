@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { ResetForm } from "./reset-form";
 
@@ -25,15 +24,5 @@ async function Gate() {
   const access = await getAdminAccess();
   if (access.status === "signed_out") redirect("/admin/forgot-password?expired=1");
   if (access.status === "not_admin") redirect("/admin/no-access");
-
-  if (access.status === "needs_mfa") {
-    // With an authenticator set up, the code is needed before changing the password.
-    const supabase = await createSupabaseServerClient();
-    const { data } = await supabase.auth.mfa.listFactors();
-    if (data?.totp.some((f) => f.status === "verified")) {
-      redirect("/admin/verify?next=/admin/reset-password");
-    }
-  }
-
   return <ResetForm />;
 }

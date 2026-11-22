@@ -9,7 +9,7 @@ export default function LoginPage() {
     <>
       <h1 className="text-2xl">Sign in</h1>
       <p className="mt-2 mb-6 text-sm text-muted-foreground">
-        Enter your administrator email and password. You&apos;ll then confirm with your authenticator app.
+        Enter your administrator email address and password.
       </p>
       <Suspense>
         <LoginForm />

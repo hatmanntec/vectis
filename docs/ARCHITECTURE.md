@@ -31,3 +31,8 @@ The Supabase service-role key is never used by the application.
 
 Draft → Published (Scheduled if `published_at` is in the future) → Unpublish returns to Draft.
 Archive hides a record everywhere, Restore returns it as a Draft, and Delete is offered only for archived records.
+
+## Sign-in
+
+Password-only (client decision, 22 Nov 2026). `is_admin()` = signed in + active row in `admin_profiles`.
+Public sign-up is disabled in Supabase; administrators are added only through the SQL Editor.
