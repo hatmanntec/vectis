@@ -9,6 +9,7 @@ import { formatDateTime } from "@/lib/cms/status";
 import { getSector, sectorUsage } from "@/features/sectors/queries";
 import { deleteSector, setSectorStatus, updateSector } from "@/features/sectors/actions";
 import { SectorForm } from "@/features/sectors/components/sector-form";
+import { getMediaByIds } from "@/features/media/queries";
 
 export const metadata: Metadata = { title: "Edit sector" };
 
@@ -24,6 +25,10 @@ async function Editor({ params }: { params: PageProps<"/admin/sectors/[id]">["pa
   const { id } = await params;
   const sector = await getSector(id);
   if (!sector) notFound();
+  const coverMedia = (await getMediaByIds([sector.cover_media_id])).get(sector.cover_media_id ?? "");
+  const cover = coverMedia
+    ? { id: coverMedia.id, file_name: coverMedia.file_name, alt_text: coverMedia.alt_text, previewUrl: coverMedia.previewUrl }
+    : null;
 
   return (
     <>
@@ -33,7 +38,7 @@ async function Editor({ params }: { params: PageProps<"/admin/sectors/[id]">["pa
         actions={<StatusBadge status={sector.status} publishedAt={sector.published_at} />}
       />
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
-        <SectorForm action={updateSector.bind(null, sector.id)} sector={sector} />
+        <SectorForm action={updateSector.bind(null, sector.id)} sector={sector} cover={cover} />
 
         <aside className="space-y-6">
           <section className="border border-border bg-white">

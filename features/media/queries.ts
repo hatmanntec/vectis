@@ -1,0 +1,151 @@
+import "server-only";
+import { requireAdmin } from "@/lib/auth/admin";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { pageRange, searchPattern, type ListConfig, type ListParams } from "@/lib/cms/list";
+import { isImage, type Bucket } from "@/lib/media/rules";
+
+type Supabase = Awaited<ReturnType<typeof createSupabaseServerClient>>;
+
+export const MEDIA_LIST: ListConfig = {
+  sortable: ["created_at", "file_name", "size_bytes"],
+  defaultDir: "desc",
+  filters: {
+    category: ["logo", "photo", "document", "other"],
+    bucket: ["public-media", "private-files"],
+  },
+};
+
+export type MediaRow = {
+  id: string;
+  bucket: Bucket;
+  path: string;
+  file_name: string;
+  mime_type: string;
+  size_bytes: number;
+  width: number | null;
+  height: number | null;
+  alt_text: string | null;
+  caption: string | null;
+  category: "logo" | "photo" | "document" | "other";
+  created_at: string;
+};
+
+export type MediaWithUrl = MediaRow & { previewUrl: string | null };
+
+const COLUMNS = "id, bucket, path, file_name, mime_type, size_bytes, width, height, alt_text, caption, category, created_at";
+
+/**
+ * Adds a viewable address to each file:
+ *  - public files: their permanent public address
+ *  - private images: a link that works for 1 hour only
+ *  - private documents: none (opened on demand from the file's page)
+ */
+export async function withPreviewUrls(supabase: Supabase, rows: MediaRow[]): Promise<MediaWithUrl[]> {
+  const privateImagePaths = rows.filter((r) => r.bucket === "private-files" && isImage(r.mime_type)).map((r) => r.path);
+  const signed = new Map<string, string>();
+  if (privateImagePaths.length) {
+    const { data } = await supabase.storage.from("private-files").createSignedUrls(privateImagePaths, 3600);
+    for (const s of data ?? []) if (s.path && s.signedUrl) signed.set(s.path, s.signedUrl);
+  }
+  return rows.map((r) => ({
+    ...r,
+    previewUrl:
+      r.bucket === "public-media"
+        ? supabase.storage.from("public-media").getPublicUrl(r.path).data.publicUrl
+        : (signed.get(r.path) ?? null),
+  }));
+}
+
+export async function listMedia(params: ListParams) {
+  await requireAdmin();
+  const supabase = await createSupabaseServerClient();
+
+  let query = supabase.from("media").select(COLUMNS, { count: "exact" });
+  if (params.q) {
+    const p = searchPattern(params.q);
+    query = query.or(`file_name.ilike.${p},alt_text.ilike.${p},caption.ilike.${p}`);
+  }
+  if (params.filters.category) query = query.eq("category", params.filters.category as "photo");
+  if (params.filters.bucket) query = query.eq("bucket", params.filters.bucket);
+
+  const [from, to] = pageRange(params.page);
+  const { data, count, error } = await query
+    .order(params.sort, { ascending: params.dir === "asc" })
+    .order("id")
+    .range(from, to);
+  if (error) throw new Error(`Could not load the media library: ${error.message}`);
+  return { rows: await withPreviewUrls(supabase, (data ?? []) as MediaRow[]), total: count ?? 0 };
+}
+
+export async function getMedia(id: string): Promise<MediaWithUrl | null> {
+  await requireAdmin();
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.from("media").select(COLUMNS).eq("id", id).maybeSingle();
+  if (!data) return null;
+  return (await withPreviewUrls(supabase, [data as MediaRow]))[0];
+}
+
+/** Look up several files at once (used to show the images chosen in a form). */
+export async function getMediaByIds(ids: (string | null | undefined)[]): Promise<Map<string, MediaWithUrl>> {
+  const wanted = [...new Set(ids.filter((x): x is string => Boolean(x)))];
+  if (!wanted.length) return new Map();
+  await requireAdmin();
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.from("media").select(COLUMNS).in("id", wanted);
+  const rows = await withPreviewUrls(supabase, (data ?? []) as MediaRow[]);
+  return new Map(rows.map((r) => [r.id, r]));
+}
+
+export type MediaUse = { where: string; name: string; href: string | null };
+
+/**
+ * Everything that uses a file. A file in use cannot be deleted (the database
+ * refuses), so the CMS shows this list instead of a delete that would fail.
+ */
+export async function mediaUsage(id: string): Promise<MediaUse[]> {
+  await requireAdmin();
+  const supabase = await createSupabaseServerClient();
+  const uses: MediaUse[] = [];
+
+  const checks = await Promise.all([
+    supabase.from("companies").select("id, name").or(`logo_media_id.eq.${id},cover_media_id.eq.${id}`),
+    supabase.from("investments").select("id, slug").eq("logo_media_id", id),
+    supabase.from("projects").select("id, title").eq("cover_media_id", id),
+    supabase.from("news").select("id, title").eq("cover_media_id", id),
+    supabase.from("leadership").select("id, full_name").eq("photo_media_id", id),
+    supabase.from("sectors").select("id, name").eq("cover_media_id", id),
+    supabase.from("pages").select("id, title").eq("og_image_media_id", id),
+    supabase.from("website_settings").select("id").or(`logo_media_id.eq.${id},og_image_media_id.eq.${id}`),
+    supabase.from("media_links").select("id, role, company_id, investment_id, project_id, news_id, leadership_id").eq("media_id", id),
+  ]);
+
+  const [companies, investments, projects, news, leadership, sectors, pages, settings, links] = checks;
+  for (const r of companies.data ?? []) uses.push({ where: "Company", name: r.name, href: null });
+  for (const r of investments.data ?? []) uses.push({ where: "Investment", name: r.slug, href: null });
+  for (const r of projects.data ?? []) uses.push({ where: "Project", name: r.title, href: null });
+  for (const r of news.data ?? []) uses.push({ where: "News", name: r.title, href: null });
+  for (const r of leadership.data ?? []) uses.push({ where: "Leadership", name: r.full_name, href: null });
+  for (const r of sectors.data ?? []) uses.push({ where: "Sector cover image", name: r.name, href: `/admin/sectors/${r.id}` });
+  for (const r of pages.data ?? []) uses.push({ where: "Website page", name: r.title, href: null });
+  if ((settings.data ?? []).length) uses.push({ where: "Website settings", name: "Logo or sharing image", href: "/admin/settings" });
+  for (const r of links.data ?? []) {
+    uses.push({ where: r.role === "gallery" ? "Gallery image" : "Supporting document", name: "Attached to a record", href: null });
+  }
+  return uses;
+}
+
+/** Files for the "Choose an image" dialog, newest first. */
+export async function searchMediaForPicker(q: string, page: number, imagesOnly: boolean) {
+  await requireAdmin();
+  const supabase = await createSupabaseServerClient();
+  let query = supabase.from("media").select(COLUMNS, { count: "exact" }).eq("bucket", "public-media");
+  if (imagesOnly) query = query.in("mime_type", ["image/jpeg", "image/png", "image/webp"]);
+  if (q) {
+    const p = searchPattern(q);
+    query = query.or(`file_name.ilike.${p},alt_text.ilike.${p}`);
+  }
+  const from = (page - 1) * 12;
+  const { data, count } = await query.order("created_at", { ascending: false }).order("id").range(from, from + 11);
+  return { items: await withPreviewUrls(supabase, (data ?? []) as MediaRow[]), total: count ?? 0 };
+}

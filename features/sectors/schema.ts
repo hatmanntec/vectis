@@ -26,6 +26,11 @@ export const sectorSchema = z.object({
     .default(0),
   seo_title: optionalText(70),
   seo_description: optionalText(160),
+  cover_media_id: z
+    .string()
+    .trim()
+    .refine((v) => v === "" || /^[0-9a-f-]{36}$/i.test(v), "Choose an image from the library.")
+    .transform((v) => (v === "" ? null : v)),
 });
 
 export type SectorInput = z.infer<typeof sectorSchema>;
@@ -38,6 +43,7 @@ export function readSectorForm(formData: FormData) {
     sort_order: formData.get("sort_order") || 0,
     seo_title: formData.get("seo_title") ?? "",
     seo_description: formData.get("seo_description") ?? "",
+    cover_media_id: formData.get("cover_media_id") ?? "",
   });
 }
 

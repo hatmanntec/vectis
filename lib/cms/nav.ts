@@ -42,7 +42,7 @@ export const NAV: NavGroup[] = [
     label: "Library",
     items: [
       { label: "Sectors", href: "/admin/sectors", icon: Layers, ready: true },
-      { label: "Media Library", href: "/admin/media", icon: ImageIcon, ready: false, milestone: "M5" },
+      { label: "Media Library", href: "/admin/media", icon: ImageIcon, ready: true },
     ],
   },
   {
@@ -50,7 +50,7 @@ export const NAV: NavGroup[] = [
     items: [
       { label: "Enquiries", href: "/admin/enquiries", icon: Inbox, ready: false, milestone: "M10" },
       { label: "Audit Log", href: "/admin/audit-log", icon: History, ready: true },
-      { label: "Settings", href: "/admin/settings", icon: Settings, ready: false, milestone: "M5" },
+      { label: "Settings", href: "/admin/settings", icon: Settings, ready: true },
     ],
   },
 ];

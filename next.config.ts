@@ -52,6 +52,10 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   poweredByHeader: false,
+  images: {
+    // Public files in Supabase Storage may be resized and optimised by Next.js.
+    remotePatterns: supabaseOrigin ? [new URL(`${supabaseOrigin}/storage/v1/object/public/**`)] : [],
+  },
   turbopack: {
     rules: {
       "*.css": {

@@ -10,9 +10,57 @@ The running record of what has been built. Newest milestone first.
 | M1: Project skeleton | Done and live on Vercel (22 Nov 2026) |
 | M2: Database | Done and live (22 Nov 2026) |
 | M3: Authentication | Done (password-only since M3.1) |
-| M4: CMS shell, shared parts, Sectors, Audit log | **Done** (22 Nov 2026) |
-| M5: Settings and Media Library | Next |
-| M6–M11: remaining CMS modules | — |
+| M4: CMS shell, shared parts, Sectors, Audit log | Done (22 Nov 2026) |
+| M5: Media Library and Settings | **Done** (22 Nov 2026) |
+| M6: Companies | Next |
+| M7–M11: remaining CMS modules | — |
+
+## M5: Media Library and Settings (22 Nov 2026)
+
+**Built**
+
+- **Media Library** (`/admin/media`, `features/media/`)
+  - Upload by drag-and-drop or by choosing files, several at once. Each file is marked **Public (website)** or
+    **Private (administrators only)**.
+  - Files go straight from the browser to Supabase Storage, so large files don't pass through Vercel. The server
+    then checks and records each one. If recording fails, the stored file is removed again.
+  - Accepted: JPG, PNG and WebP images up to 10 MB, and PDFs up to 25 MB. Word and Excel files (up to 25 MB) are
+    private only. SVG is not accepted. Each file is stored as `category/year/random-id.ext`, so uploads never
+    overwrite each other and addresses can't be guessed.
+  - The library is a grid of thumbnails with search (file name, alt text, caption) and filters by type and visibility.
+  - Each file's page has a preview, details (alt text, caption, type), a public address with a Copy button
+    (public files only), and an "Open file" link that expires after 1 hour for private files.
+  - **"Where it's used"** lists the companies, sectors, settings, galleries and so on that use the file.
+    A file in use can't be deleted: the button is replaced by an explanation, and the database refuses as well.
+    Deleting an unused file removes both the library entry and the stored file.
+- **Choose-image picker** (`components/cms/media-picker.tsx`): a reusable form field that opens a dialog of
+  public images with search and pages, plus "upload a new image" on the spot (the new image is selected
+  automatically). It's used for the sector cover image and the two settings images, and will be used for all
+  later modules.
+- **Settings** (`/admin/settings`, `features/settings/`): website name, tagline, an approved alternative logo
+  (optional; the official master logo is used otherwise), contact email, telephone and address, social media
+  links (LinkedIn, X, Facebook, Instagram, YouTube; full https addresses only, empty ones aren't stored),
+  default search title and description, and the default sharing image.
+- **Sectors:** a cover image field.
+- `next.config.ts`: the Next.js image optimiser may load public files from Supabase Storage (ready for the public website).
+
+**Checked before delivery**
+
+- Type-check, lint and production build pass.
+- **38 automated browser checks, passed on repeated runs**, against the real VECTIS schema, with storage
+  rules enforced by the database through a test stand-in for Supabase Storage:
+  - multi-file upload; the recorded image size; the random stored name; thumbnails; the public address working
+  - wrong file types and oversized files refused with reasons, and nothing stored for them
+  - private Word file: no public address, opened through an expiring link
+  - an anonymous upload straight to storage refused
+  - editing alt text, search and filters
+  - settings validation (email, https links), saving, the picker showing only public images
+  - a file in use: shown in "Where it's used", delete not offered, and refused by the database too
+  - uploading inside the picker for a sector cover
+  - deleting an unused file removes the stored file too; audit entries recorded; phone layouts
+- Earlier suites re-run and passing: sign-in (23) and M4 (45).
+- One test run logged a single secure-connection error from the browser, which did not reappear in
+  three further runs. It came from the test browser itself, not from VECTIS code.
 
 ## M4: CMS shell, shared building blocks, Sectors, Audit log (22 Nov 2026)
 

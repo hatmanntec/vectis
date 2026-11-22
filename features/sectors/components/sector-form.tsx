@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { NameAndSlugFields, TextAreaField, TextField } from "@/components/cms/fields";
+import { MediaPicker, type PickedMedia } from "@/components/cms/media-picker";
 import { Panel } from "@/components/cms/page-parts";
 import { FormAlert, SubmitButton } from "@/components/cms/form-bits";
 import { Button } from "@/components/ui/button";
@@ -22,9 +23,11 @@ type SectorValues = {
 export function SectorForm({
   action,
   sector,
+  cover = null,
 }: {
   action: (prev: ActionResult | null, formData: FormData) => Promise<ActionResult>;
   sector?: SectorValues;
+  cover?: PickedMedia | null;
 }) {
   const [result, formAction] = useActionState(action, null);
   const router = useRouter();
@@ -71,6 +74,10 @@ export function SectorForm({
           defaultValue={sector?.sort_order ?? 0}
           error={errors.sort_order}
         />
+      </Panel>
+
+      <Panel title="Cover image" description="Shown at the top of the sector's page on the website.">
+        <MediaPicker name="cover_media_id" label="Cover image" initial={cover} error={errors.cover_media_id} />
       </Panel>
 
       <Panel title="Search engines" description="Optional. If left empty, the sector name and description are used.">
