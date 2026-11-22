@@ -1,6 +1,7 @@
 import "server-only";
 import { requireAdmin } from "@/lib/auth/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { investmentTitle } from "@/features/investments/labels";
 
 /**
  * Figures for the dashboard. Every number is counted from the database at the
@@ -91,6 +92,24 @@ export async function getDashboardData() {
     .flat()
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
     .slice(0, 6);
+
+  // Investments have no title of their own: show "Investor → Invested in".
+  const investmentIds = recentRecords.filter((r) => r.table === "investments").map((r) => r.id);
+  if (investmentIds.length) {
+    const { data: invs } = await supabase
+      .from("investments")
+      .select("id, investor_company_id, investee_company_id")
+      .in("id", investmentIds);
+    const companyIds = [...new Set((invs ?? []).flatMap((i) => [i.investor_company_id, i.investee_company_id]))];
+    const { data: cos } = companyIds.length
+      ? await supabase.from("companies").select("id, name").in("id", companyIds)
+      : { data: [] as { id: string; name: string }[] };
+    const name = new Map((cos ?? []).map((c) => [c.id, c.name]));
+    const label = new Map(
+      (invs ?? []).map((i) => [i.id, investmentTitle(name.get(i.investor_company_id) ?? "Unknown", name.get(i.investee_company_id) ?? "Unknown")]),
+    );
+    for (const r of recentRecords) if (r.table === "investments") r.title = label.get(r.id) ?? r.title;
+  }
 
   const { data: activity } = await supabase
     .from("audit_logs")

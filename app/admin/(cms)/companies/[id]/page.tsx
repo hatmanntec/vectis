@@ -19,6 +19,8 @@ import { RelationshipsPanel } from "@/features/companies/components/relationship
 import { CLASSIFICATION_LABEL } from "@/features/companies/labels";
 import { getMediaByIds, listAttachments, toPicked } from "@/features/media/queries";
 import { addMediaLink, moveMediaLink, removeMediaLink } from "@/features/media/link-actions";
+import { companyInvestments } from "@/features/investments/queries";
+import { CompanyInvestmentsPanel } from "@/features/investments/components/company-investments-panel";
 
 export const metadata: Metadata = { title: "Edit company" };
 
@@ -35,7 +37,7 @@ async function Editor({ params }: { params: PageProps<"/admin/companies/[id]">["
   const company = await getCompany(id);
   if (!company) notFound();
 
-  const [companies, sectors, media, usage, relationships, gallery, documents] = await Promise.all([
+  const [companies, sectors, media, usage, relationships, gallery, documents, investments] = await Promise.all([
     companyOptions(),
     sectorOptions(),
     getMediaByIds([company.logo_media_id, company.cover_media_id]),
@@ -43,6 +45,7 @@ async function Editor({ params }: { params: PageProps<"/admin/companies/[id]">["
     listRelationships(company.id),
     listAttachments("companies", company.id, "gallery"),
     listAttachments("companies", company.id, "document"),
+    companyInvestments(company.id),
   ]);
 
   const parent = companies.find((c) => c.id === company.parent_company_id);
@@ -83,6 +86,11 @@ async function Editor({ params }: { params: PageProps<"/admin/companies/[id]">["
             add={addRelationship.bind(null, company.id)}
             setVisible={setRelationshipVisibility}
             remove={removeRelationship}
+          />
+          <CompanyInvestmentsPanel
+            companyId={company.id}
+            canInvest={company.classification !== "external"}
+            rows={investments}
           />
           <AttachmentsPanel
             title="Gallery"

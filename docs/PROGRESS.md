@@ -12,9 +12,37 @@ The running record of what has been built. Newest milestone first.
 | M3: Authentication | Done (password-only since M3.1) |
 | M4: CMS shell, shared parts, Sectors, Audit log | Done (22 Nov 2026) |
 | M5: Media Library and Settings | Done (22 Nov 2026) |
-| M6: Companies | **Done** (22 Nov 2026), includes database update 0017 |
-| M7: Investments | Next |
-| M8–M11: remaining CMS modules | — |
+| M6: Companies | Done (22 Nov 2026), includes database update 0017 |
+| M7: Investments | **Done** (22 Nov 2026), no database update |
+| M8: Projects | Next |
+| M9–M11: remaining CMS modules | — |
+
+## M7: Investments (22 Nov 2026)
+
+**Built**
+
+- **Investments module** (`/admin/investments`, `features/investments/`)
+  - **Investor:** only VECTIS and its own businesses and subsidiaries (checked again on the server, so a tampered
+    page can't choose an outside company). **Invested in:** any company. A company can't invest in itself.
+  - **Nature:** portfolio investment, equity stake, joint venture, strategic investment or other, plus an optional
+    line in VECTIS's own words (e.g. "Investment relationship"). Nothing in the module implies ownership.
+  - **Investment status** (active / pending / exited), optional date (only if confirmed), summary, full description,
+    optional logo (falls back to the logo of the company invested in), display order and search-engine fields.
+  - **Web address** filled in from the company invested in until you change it; duplicates are refused.
+  - **Confidential details** (stake %, amount and currency, internal notes) in a clearly marked panel. They live in a
+    separate table the website can never read, even for published investments. An amount needs a currency;
+    clearing every field removes the row.
+  - **Publishing:** an investment shows on the website only when it and **both** companies are published; the panel
+    says which company still needs publishing. Archive → delete permanently (confidential details go with it).
+  - **Gallery and supporting documents**, as on companies.
+  - **List:** search by either company's name, filters (nature, investment status, website status), sorting, pages.
+- **Company pages** now list investments made and received, with a "New investment" button that presets the investor.
+- **Dashboard** shows investments as "Investor → Invested in" instead of the web address.
+- **Media library:** "Where it's used" now links to investments.
+- **New shared part:** `components/cms/select-field.tsx` (labelled drop-down with hint and error).
+
+**Tested:** 43 new browser checks (including that visitors and signed-in non-admins can never read confidential
+figures); all earlier suites re-run and passing (database 60 + 9, sign-in 23, M4 45, M5 38, M6 34).
 
 ## M6: Companies (22 Nov 2026)
 
