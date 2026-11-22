@@ -1,0 +1,20 @@
+# Installed packages (Vercel installs these itself)
+/node_modules
+
+# Build output
+/.next/
+/out/
+/build
+
+# Secret settings: never upload these
+.env*
+!.env.example
+
+# Vercel and TypeScript working files
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# Operating system and log files
+.DS_Store
+npm-debug.log*

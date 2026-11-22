@@ -1,0 +1,106 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+ * VECTIS design tokens
+ * --------------------
+ * The six approved brand colours live here and nowhere else.
+ * Components refer to them by name (bg-indigo, text-graphite, border-copper)
+ * or through the shadcn/ui roles below (bg-primary, text-muted-foreground).
+ * To adjust a colour across the whole platform, change it once in :root.
+ */
+
+:root {
+  /* Approved corporate palette */
+  --vectis-indigo: #0d115a;   /* Primary: Midnight Indigo */
+  --vectis-ivory: #f2efe5;    /* Secondary: Mineral Ivory */
+  --vectis-copper: #a45f43;   /* Accent: Oxidised Copper (borders, active states, large text only) */
+  --vectis-graphite: #252832; /* Dark neutral: Industrial Graphite */
+  --vectis-steel: #aeb7c5;    /* Supporting neutral: Steel Mist */
+  --vectis-teal: #285b59;     /* Industry accent: Petroleum Teal */
+
+  /* Interface roles used by shadcn/ui components */
+  --radius: 0.375rem;
+  --background: var(--vectis-ivory);
+  --foreground: var(--vectis-graphite);
+  --card: #fbfaf6;
+  --card-foreground: var(--vectis-graphite);
+  --popover: #fbfaf6;
+  --popover-foreground: var(--vectis-graphite);
+  --primary: var(--vectis-indigo);
+  --primary-foreground: var(--vectis-ivory);
+  --secondary: #e7e3d6;
+  --secondary-foreground: var(--vectis-graphite);
+  --muted: #e7e3d6;
+  --muted-foreground: #5a5e6b;
+  --accent: #e7e3d6;
+  --accent-foreground: var(--vectis-indigo);
+  --destructive: #a3292b;
+  --border: #d9d5c8;
+  --input: #cfcbbd;
+  --ring: var(--vectis-copper);
+
+  /* CMS sidebar */
+  --sidebar: var(--vectis-indigo);
+  --sidebar-foreground: var(--vectis-ivory);
+  --sidebar-accent: #1b2070;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #232877;
+}
+
+@theme inline {
+  /* Brand colours as Tailwind utilities: bg-indigo, text-copper, border-steel ... */
+  --color-indigo: var(--vectis-indigo);
+  --color-ivory: var(--vectis-ivory);
+  --color-copper: var(--vectis-copper);
+  --color-graphite: var(--vectis-graphite);
+  --color-steel: var(--vectis-steel);
+  --color-teal: var(--vectis-teal);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+
+  /* Typography: an editorial serif for headings, a precise sans for text and UI */
+  --font-sans: "IBM Plex Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Source Serif 4 Variable", ui-serif, Georgia, serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-serif tracking-tight text-indigo;
+  }
+}
