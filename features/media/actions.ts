@@ -7,6 +7,8 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { describeDbError, type ActionResult } from "@/lib/cms/results";
 import { checkFile, STORAGE_PATH_PATTERN } from "@/lib/media/rules";
 import { searchMediaForPicker } from "./queries";
+import { mediaIdsInContent } from "@/features/pages/content";
+import { templateFor } from "@/features/pages/templates";
 
 /**
  * Media library actions. The browser uploads the file itself straight to
@@ -87,6 +89,14 @@ export async function deleteMedia(id: string): Promise<ActionResult> {
   await requireAdmin();
   if (!z.string().uuid().safeParse(id).success) return { ok: false, error: "Unknown file." };
   const supabase = await createSupabaseServerClient();
+
+  // Images placed in website page fields aren't protected by the database
+  // (they live inside the page's content), so check those first.
+  const { data: pages } = await supabase.from("pages").select("title, template, content");
+  const usedBy = (pages ?? []).filter((p) => mediaIdsInContent(templateFor(p.template), p.content).includes(id));
+  if (usedBy.length) {
+    return { ok: false, error: `This file is used on the ${usedBy.map((p) => p.title).join(", ")} page. Remove it there first.` };
+  }
 
   const { data: rows, error } = await supabase.from("media").delete().eq("id", id).select("bucket, path");
   if (error) {

@@ -4,6 +4,8 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { pageRange, searchPattern, type ListConfig, type ListParams } from "@/lib/cms/list";
 import { isImage, type Bucket } from "@/lib/media/rules";
 import { OWNER_COLUMN, type LinkOwner } from "./link-owners";
+import { mediaIdsInContent } from "@/features/pages/content";
+import { templateFor } from "@/features/pages/templates";
 
 type Supabase = Awaited<ReturnType<typeof createSupabaseServerClient>>;
 
@@ -116,7 +118,7 @@ export async function mediaUsage(id: string): Promise<MediaUse[]> {
     supabase.from("news").select("id, title").eq("cover_media_id", id),
     supabase.from("leadership").select("id, full_name").eq("photo_media_id", id),
     supabase.from("sectors").select("id, name").eq("cover_media_id", id),
-    supabase.from("pages").select("id, title").eq("og_image_media_id", id),
+    supabase.from("pages").select("id, title, template, content, og_image_media_id"),
     supabase.from("website_settings").select("id").or(`logo_media_id.eq.${id},og_image_media_id.eq.${id}`),
     supabase.from("media_links").select("id, role, company_id, investment_id, project_id, news_id, leadership_id").eq("media_id", id),
   ]);
@@ -126,9 +128,14 @@ export async function mediaUsage(id: string): Promise<MediaUse[]> {
   for (const r of investments.data ?? []) uses.push({ where: "Investment logo", name: r.slug, href: `/admin/investments/${r.id}` });
   for (const r of projects.data ?? []) uses.push({ where: "Project cover image", name: r.title, href: `/admin/projects/${r.id}` });
   for (const r of news.data ?? []) uses.push({ where: "News cover image", name: r.title, href: `/admin/news/${r.id}` });
-  for (const r of leadership.data ?? []) uses.push({ where: "Leadership", name: r.full_name, href: null });
+  for (const r of leadership.data ?? []) uses.push({ where: "Leadership portrait", name: r.full_name, href: `/admin/leadership/${r.id}` });
   for (const r of sectors.data ?? []) uses.push({ where: "Sector cover image", name: r.name, href: `/admin/sectors/${r.id}` });
-  for (const r of pages.data ?? []) uses.push({ where: "Website page", name: r.title, href: null });
+  for (const r of pages.data ?? []) {
+    if (r.og_image_media_id === id) uses.push({ where: "Website page sharing image", name: r.title, href: `/admin/pages/${r.id}` });
+    if (mediaIdsInContent(templateFor(r.template), r.content).includes(id)) {
+      uses.push({ where: "Website page image", name: r.title, href: `/admin/pages/${r.id}` });
+    }
+  }
   if ((settings.data ?? []).length) uses.push({ where: "Website settings", name: "Logo or sharing image", href: "/admin/settings" });
   const linkedCompanyIds = (links.data ?? []).map((l) => l.company_id).filter((x): x is string => Boolean(x));
   const { data: linkedCompanies } = linkedCompanyIds.length

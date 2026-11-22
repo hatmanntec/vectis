@@ -34,8 +34,8 @@ export const NAV: NavGroup[] = [
       { label: "Investments", href: "/admin/investments", icon: TrendingUp, ready: true },
       { label: "Projects", href: "/admin/projects", icon: Wrench, ready: true },
       { label: "News & Media", href: "/admin/news", icon: Newspaper, ready: true },
-      { label: "Leadership", href: "/admin/leadership", icon: Users, ready: false, milestone: "M10" },
-      { label: "Website Pages", href: "/admin/pages", icon: FileText, ready: false, milestone: "M10" },
+      { label: "Leadership", href: "/admin/leadership", icon: Users, ready: true },
+      { label: "Website Pages", href: "/admin/pages", icon: FileText, ready: true },
     ],
   },
   {
@@ -48,7 +48,7 @@ export const NAV: NavGroup[] = [
   {
     label: "Administration",
     items: [
-      { label: "Enquiries", href: "/admin/enquiries", icon: Inbox, ready: false, milestone: "M10" },
+      { label: "Enquiries", href: "/admin/enquiries", icon: Inbox, ready: true },
       { label: "Audit Log", href: "/admin/audit-log", icon: History, ready: true },
       { label: "Settings", href: "/admin/settings", icon: Settings, ready: true },
     ],

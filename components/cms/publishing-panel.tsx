@@ -17,6 +17,7 @@ export function PublishingPanel({
   deleteWarning,
   publishWarning,
   schedule,
+  allowArchive = true,
 }: {
   /** e.g. "company", used in messages. */
   noun: string;
@@ -36,6 +37,8 @@ export function PublishingPanel({
   publishWarning?: string;
   /** Offer "publish at a chosen time" (scheduling and back-dating). `initial` is in Nigeria time. */
   schedule?: { action: (prev: ActionResult | null, formData: FormData) => Promise<ActionResult>; initial: string };
+  /** False for records that can only be unpublished, never archived or deleted (core website pages). */
+  allowArchive?: boolean;
 }) {
   const s = record.status;
   const scheduled = displayStatus(s, record.published_at) === "Scheduled";
@@ -101,7 +104,9 @@ export function PublishingPanel({
               label={s === "draft" ? "Schedule or back-date…" : "Change publication date…"}
             />
           ) : null}
-          {s !== "archived" ? (
+          {!allowArchive ? (
+            <p className="text-xs text-muted-foreground">This is a core page of the website: it can be unpublished, but not archived or deleted.</p>
+          ) : s !== "archived" ? (
             <ConfirmAction
               action={setStatus.bind(null, "archived")}
               label="Archive"

@@ -15,9 +15,45 @@ The running record of what has been built. Newest milestone first.
 | M6: Companies | Done (22 Nov 2026), includes database update 0017 |
 | M7: Investments | Done (22 Nov 2026), no database update |
 | M8: Projects | Done (22 Nov 2026), no database update |
-| M9: News & Media | **Done** (22 Nov 2026), no database update |
-| M10: Leadership, Website Pages, Enquiries | Next |
-| M11: Final CMS review and test pass | — |
+| M9: News & Media | Done (22 Nov 2026), no database update |
+| M10: Leadership, Website Pages, Enquiries | **Done** (22 Nov 2026), no database update |
+| M11: Final CMS review and test pass | Next |
+
+## M10: Leadership, Website Pages, Enquiries (22 Nov 2026)
+
+Every CMS module is now built; nothing in the menu is greyed out.
+
+**Built**
+
+- **Leadership** (`/admin/leadership`, `features/leadership/`)
+  - Full name (with titles), web address, position, group (Board of Directors / Executive leadership /
+    Management), display order within the group, biography, portrait and search-engine fields.
+  - **Roles in companies:** add a company with the person's role there, rename the role in place, reorder, remove.
+    A company can only be added once. Visitors see roles only for published companies.
+  - List: board first by default; filter by group and status; search by name or position.
+  - Company pages now list the people with a role in the company.
+- **Website Pages** (`/admin/pages`, `features/pages/`)
+  - The 8 core pages, each with its own fields (`features/pages/templates.ts`): e.g. Home has an opening banner,
+    introduction, highlights and a closing invitation; History has key dates; Investment Philosophy has principles.
+    Every field starts empty. Repeatable lists can be added to, reordered and trimmed.
+  - Only the fields a page defines are saved, each checked on the server (lengths, formatted text, images).
+  - Core pages can be unpublished but never archived or deleted (also enforced by the database).
+  - **Extra pages** (e.g. a privacy policy): title, address, introduction, main text, image. Addresses the website
+    already uses (about, news, contact…) are refused. They can be archived and deleted.
+  - Sharing image and search-engine fields on every page.
+  - Images used in page fields are shown in the media library's "Where it's used" and can't be deleted there.
+- **Enquiries** (`/admin/enquiries`)
+  - Inbox of Contact-page messages; unread ones are highlighted with a dot and counted on the dashboard.
+  - Opening a message marks it read; "Mark as unread", "Reply by email" (opens your email program with the
+    subject filled in) and "Delete" (after confirming).
+  - Search across name, email, organisation, subject and message; filter read/unread.
+  - Only administrators can read enquiries; the public can only send them (database rules from M2).
+- **Shared parts:** the Publishing box takes `allowArchive={false}` for records that can only be unpublished.
+
+**Fixed during testing:** "Mark as unread" was immediately undone by the page marking the message read again.
+
+**Tested:** 52 new browser checks; all earlier suites re-run and passing (database 60 + 9, sign-in 23, M4 45,
+M5 38, M6 34, M7 43, M8 37, M9 45).
 
 ## M9: News & Media (22 Nov 2026)
 
