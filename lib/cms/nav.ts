@@ -30,7 +30,7 @@ export const NAV: NavGroup[] = [
   {
     label: "Content",
     items: [
-      { label: "Companies", href: "/admin/companies", icon: Building2, ready: false, milestone: "M6" },
+      { label: "Companies", href: "/admin/companies", icon: Building2, ready: true },
       { label: "Investments", href: "/admin/investments", icon: TrendingUp, ready: false, milestone: "M7" },
       { label: "Projects", href: "/admin/projects", icon: Wrench, ready: false, milestone: "M8" },
       { label: "News & Media", href: "/admin/news", icon: Newspaper, ready: false, milestone: "M9" },

@@ -1,5 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import type { Database } from "@/types/database";
 import { supabaseEnv } from "./env";
@@ -15,8 +16,10 @@ import { supabaseEnv } from "./env";
  * Create a new one for every request; never share it between requests.
  */
 export async function createSupabaseServerClient() {
-  // Read the cookies first: this marks the page as "per visitor", so Next.js
-  // never tries to run it ahead of time during the build.
+  // Signed-in pages are always prepared fresh for each visit: never during the
+  // build, and never in background pre-loading (the login check reads the
+  // current time to see whether the session has expired).
+  await connection();
   const cookieStore = await cookies();
   const { url, key } = supabaseEnv();
 

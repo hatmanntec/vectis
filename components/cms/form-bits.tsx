@@ -4,6 +4,7 @@ import { useFormStatus } from "react-dom";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useActionFormPending } from "@/components/cms/action-form";
 
 /** A submit button that shows a spinner and blocks double-clicks while saving. */
 export function SubmitButton({
@@ -15,7 +16,10 @@ export function SubmitButton({
   pendingText: string;
   className?: string;
 }) {
-  const { pending } = useFormStatus();
+  // Works inside a plain form and inside ActionForm.
+  const status = useFormStatus();
+  const actionFormPending = useActionFormPending();
+  const pending = status.pending || actionFormPending;
   return (
     <Button type="submit" disabled={pending} aria-disabled={pending} className={cn("w-full", className)}>
       {pending ? (

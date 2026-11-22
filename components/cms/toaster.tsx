@@ -25,6 +25,7 @@ const NOTICES: Record<string, string> = {
   created: "Created. You can keep editing below.",
   deleted: "Deleted permanently.",
   saved: "Saved.",
+  created_sectors_failed: "Created, but the sectors couldn't be saved. Please tick them again below and save.",
 };
 
 /**

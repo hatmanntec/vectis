@@ -8,6 +8,7 @@ import { SubmitButton } from "@/components/cms/form-bits";
 import { Label } from "@/components/ui/label";
 import { CATEGORY_LABEL } from "@/lib/media/rules";
 import type { ActionResult } from "@/lib/cms/results";
+import { ActionForm } from "@/components/cms/action-form";
 
 export function MediaDetailsForm({
   action,
@@ -32,7 +33,7 @@ export function MediaDetailsForm({
   }, [result, router]);
 
   return (
-    <form action={formAction} className="space-y-5" noValidate>
+    <ActionForm action={formAction} className="space-y-5" noValidate>
       {image ? (
         <TextField
           name="alt_text"
@@ -64,6 +65,6 @@ export function MediaDetailsForm({
       <SubmitButton pendingText="Saving…" className="w-auto px-6">
         Save details
       </SubmitButton>
-    </form>
+    </ActionForm>
   );
 }

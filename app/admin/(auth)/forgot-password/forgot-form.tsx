@@ -7,13 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormAlert, SubmitButton } from "@/components/cms/form-bits";
 import { requestPasswordReset, type FormState } from "@/lib/auth/actions";
+import { ActionForm } from "@/components/cms/action-form";
 
 export function ForgotForm() {
   const expired = useSearchParams().get("expired") === "1";
   const [state, action] = useActionState<FormState, FormData>(requestPasswordReset, {});
 
   return (
-    <form action={action} className="space-y-5" noValidate>
+    <ActionForm action={action} className="space-y-5" noValidate>
       {expired && !state.message && !state.error ? (
         <FormAlert error="That reset link has expired or was already used. Request a new one below." />
       ) : (
@@ -33,6 +34,6 @@ export function ForgotForm() {
           Back to sign in
         </Link>
       </p>
-    </form>
+    </ActionForm>
   );
 }

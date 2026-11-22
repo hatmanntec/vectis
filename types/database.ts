@@ -1346,6 +1346,14 @@ export type Database = {
     };
     Functions: {
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
+      set_company_sectors: {
+        Args: {
+          p_company_id: string;
+          p_primary_sector_id?: string;
+          p_sector_ids: string[];
+        };
+        Returns: undefined;
+      };
       submit_enquiry: {
         Args: {
           p_client_ip?: string;

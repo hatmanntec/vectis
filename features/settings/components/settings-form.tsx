@@ -9,6 +9,7 @@ import { Panel } from "@/components/cms/page-parts";
 import { FormAlert, SubmitButton } from "@/components/cms/form-bits";
 import type { ActionResult } from "@/lib/cms/results";
 import { SOCIAL_NETWORKS } from "../schema";
+import { ActionForm } from "@/components/cms/action-form";
 
 export type SettingsValues = {
   site_name: string;
@@ -43,7 +44,7 @@ export function SettingsForm({
   }, [result, router]);
 
   return (
-    <form action={formAction} className="space-y-6" noValidate>
+    <ActionForm action={formAction} className="space-y-6" noValidate>
       {result && !result.ok && !result.fieldErrors ? <FormAlert error={result.error} /> : null}
 
       <Panel title="Website">
@@ -105,6 +106,6 @@ export function SettingsForm({
       <SubmitButton pendingText="Saving…" className="w-auto px-6">
         Save settings
       </SubmitButton>
-    </form>
+    </ActionForm>
   );
 }

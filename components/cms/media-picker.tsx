@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useState, useTransition } from "react";
-import { ImageIcon, Loader2, Search, X } from "lucide-react";
+import { FileText, ImageIcon, Lock, Loader2, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -9,7 +9,14 @@ import { pickerSearch } from "@/features/media/actions";
 import { Uploader } from "@/features/media/components/uploader";
 import { cn } from "@/lib/utils";
 
-export type PickedMedia = { id: string; file_name: string; alt_text: string | null; previewUrl: string | null };
+export type PickedMedia = {
+  id: string;
+  file_name: string;
+  alt_text: string | null;
+  previewUrl: string | null;
+  bucket?: string;
+  mime_type?: string;
+};
 
 /**
  * "Choose image" field for forms. Saves the chosen file's id in a hidden
@@ -79,22 +86,27 @@ export function MediaPicker({
           setOpen(false);
         }}
         title={label}
+        kind="image"
       />
     </div>
   );
 }
 
-function PickerDialog({
+/** The library dialog, for images or for documents. Also used by galleries. */
+export function PickerDialog({
   open,
   onOpenChange,
   onPick,
   title,
+  kind,
 }: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
   onPick: (m: PickedMedia) => void;
   title: string;
+  kind: "image" | "document";
 }) {
+  const noun = kind === "image" ? "image" : "document";
   const [q, setQ] = useState("");
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<PickedMedia[]>([]);
@@ -104,7 +116,7 @@ function PickerDialog({
   const load = useCallback(
     (search: string, p: number, autoPickId?: string) =>
       startLoading(async () => {
-        const res = await pickerSearch(search, p, true);
+        const res = await pickerSearch(search, p, kind);
         setItems(res.items);
         setTotal(res.total);
         if (autoPickId) {
@@ -112,7 +124,7 @@ function PickerDialog({
           if (found) onPick(found);
         }
       }),
-    [onPick],
+    [onPick, kind],
   );
 
   useEffect(() => {
@@ -129,7 +141,7 @@ function PickerDialog({
       <DialogContent className="max-h-[90dvh] overflow-y-auto rounded-sm sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle className="font-serif text-xl text-indigo">{title}</DialogTitle>
-          <DialogDescription>Choose an image from the library, or upload a new one.</DialogDescription>
+          <DialogDescription>Choose {kind === "image" ? "an image" : "a document"} from the library, or upload a new one.</DialogDescription>
         </DialogHeader>
 
         <div className="relative">
@@ -141,8 +153,8 @@ function PickerDialog({
               setQ(e.target.value);
               setPage(1);
             }}
-            placeholder="Search images"
-            aria-label="Search images"
+            placeholder={`Search ${noun}s`}
+            aria-label={`Search ${noun}s`}
             className="pl-9"
           />
         </div>
@@ -153,7 +165,7 @@ function PickerDialog({
           ) : null}
           {items.length === 0 && !loading ? (
             <p className="py-10 text-center text-sm text-muted-foreground">
-              {q ? "No images match." : "No public images in the library yet. Upload one below."}
+              {q ? `No ${noun}s match.` : kind === "image" ? "No public images in the library yet. Upload one below." : "No documents in the library yet. Upload one below."}
             </p>
           ) : (
             <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4">
@@ -166,12 +178,17 @@ function PickerDialog({
                     aria-label={`Choose ${m.file_name}`}
                   >
                     <span className="flex aspect-square items-center justify-center overflow-hidden bg-ivory/60">
-                      {m.previewUrl ? (
+                      {kind === "image" && m.previewUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={m.previewUrl} alt="" loading="lazy" className="h-full w-full object-contain" />
-                      ) : null}
+                      ) : (
+                        <FileText className="size-8 text-steel" aria-hidden />
+                      )}
                     </span>
-                    <span className="block truncate border-t border-border px-2 py-1 text-xs text-graphite">{m.file_name}</span>
+                    <span className="flex items-center gap-1 truncate border-t border-border px-2 py-1 text-xs text-graphite">
+                      {m.bucket === "private-files" ? <Lock className="size-3 shrink-0" aria-label="Private" /> : null}
+                      <span className="truncate">{m.file_name}</span>
+                    </span>
                   </button>
                 </li>
               ))}
@@ -194,11 +211,11 @@ function PickerDialog({
         ) : null}
 
         <div className="border-t border-border pt-4">
-          <p className="mb-2 text-sm font-medium text-graphite">Upload a new image</p>
+          <p className="mb-2 text-sm font-medium text-graphite">Upload a new {noun}</p>
           <Uploader
             compact
-            imagesOnly
-            fixedBucket="public-media"
+            imagesOnly={kind === "image"}
+            fixedBucket={kind === "image" ? "public-media" : undefined}
             onUploaded={(newId) => {
               setQ("");
               setPage(1);

@@ -11,9 +11,54 @@ The running record of what has been built. Newest milestone first.
 | M2: Database | Done and live (22 Nov 2026) |
 | M3: Authentication | Done (password-only since M3.1) |
 | M4: CMS shell, shared parts, Sectors, Audit log | Done (22 Nov 2026) |
-| M5: Media Library and Settings | **Done** (22 Nov 2026) |
-| M6: Companies | Next |
-| M7–M11: remaining CMS modules | — |
+| M5: Media Library and Settings | Done (22 Nov 2026) |
+| M6: Companies | **Done** (22 Nov 2026), includes database update 0017 |
+| M7: Investments | Next |
+| M8–M11: remaining CMS modules | — |
+
+## M6: Companies (22 Nov 2026)
+
+**Built**
+
+- **Companies module** (`/admin/companies`, `features/companies/`)
+  - **Kind of company:** Parent organisation / VECTIS business / Subsidiary / Outside company, each with a plain explanation.
+  - **"Sits under":** builds the group tree (VECTIS → its businesses). The parent field is switched off for the parent organisation.
+    Loops (A under B under A) are refused with a clear message. A currently archived parent stays selected, so saving never drops it.
+  - **Content:** year established, short description, a full description in the new formatted-text editor, sectors (tick
+    several, choose the main one), logo, cover image, contact details, search-engine fields and display order.
+  - **Links with other companies:** strategic partner, joint venture, affiliate or other, with description and dates, and a
+    Show/Hide switch for the website. A link appears publicly only when both companies are published.
+    Links never imply ownership.
+  - **Gallery** (public images, in order) and **Supporting documents** (public or private), added from the library
+    or uploaded on the spot, re-ordered with arrows, and removed (the file stays in the library).
+  - **Publishing** panel: publish, unpublish, archive, restore, delete permanently. Delete is refused while companies,
+    investments or projects depend on the company, and the dialog says exactly what blocks it.
+  - **List:** logo thumbnails, kind, "sits under", status; search; filters by kind and status; sorting; pages.
+- **Database update 0017** `set_company_sectors()`: saves a company's sectors and main sector in one step.
+  It runs with the administrator's own permissions and checks `is_admin()`.
+- **New shared parts** for the remaining modules:
+  - `components/cms/rich-text-editor.tsx`: headings, bold, italic, lists, quotes and links (Tiptap). It saves structured
+    JSON; `lib/cms/rich-text.ts` rebuilds it on the server, keeping only allowed formatting and safe link addresses.
+  - `components/cms/publishing-panel.tsx`: the Publishing box, now also used by Sectors.
+  - `components/cms/attachments-panel.tsx` + `features/media/link-actions.ts`: galleries and documents for any record.
+  - `components/cms/action-form.tsx`: see the fixes below.
+  - The media picker can now choose documents (PDF, Word, Excel; public or private) as well as images.
+
+**Problems found by testing and fixed**
+
+- **Forms were emptied after a validation error** (React 19 behaviour), which affected every form, including login.
+  All 8 forms now use `ActionForm`, which keeps what was typed.
+- **The editor lost the first letter typed after clicking a toolbar button.** Fixed.
+- **Signed-in pages logged warnings while Next.js pre-loaded them in the background** (the Supabase login check reads the
+  current time). Signed-in pages are now always prepared per visit (`connection()` in `lib/supabase/server.ts`), and the server log is clean.
+- **The editor's link button had the same name as "Add link"** in the links panel, which is confusing for screen readers. Renamed.
+- **An archived parent company disappeared from the "Sits under" list**, so saving would have removed it. Fixed.
+
+**Checked before delivery**
+
+- Database: 60 earlier checks plus 9 new ones for `set_company_sectors()`: replacing the list, moving the main sector,
+  a refused call changing nothing, non-admins and the public refused, and changes audited. The CLI push was rehearsed.
+- **34 browser checks for Companies**, plus the earlier suites re-run: sign-in 23, M4 45, M5 38. All pass.
 
 ## M5: Media Library and Settings (22 Nov 2026)
 

@@ -27,6 +27,19 @@ git push
 
 Vercel rebuilds the site automatically after every push.
 
+### When a milestone includes a database update
+
+Some milestones add a file to `supabase/migrations/` (the delivery note says so). After unzipping,
+and **before** `git push`, run:
+
+```bash
+cd ~/Projects/vectis
+npx supabase@3.2.0 db push --remote --dry-run   # lists only the new file(s)
+npx supabase@3.2.0 db push --remote             # applies them
+```
+
+If it asks you to sign in or link again, see Part 3, steps 1–2.
+
 ---
 
 ## Part 2: Supabase project (once)

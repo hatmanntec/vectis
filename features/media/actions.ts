@@ -114,15 +114,17 @@ export async function discardUpload(bucket: string, path: string): Promise<void>
 }
 
 /** Used by the "Choose an image" dialog. */
-export async function pickerSearch(q: string, page: number, imagesOnly: boolean) {
+export async function pickerSearch(q: string, page: number, kind: "image" | "document") {
   const safePage = Number.isInteger(page) && page > 0 && page < 1000 ? page : 1;
-  const { items, total } = await searchMediaForPicker(String(q ?? "").slice(0, 100), safePage, Boolean(imagesOnly));
+  const safeKind = kind === "document" ? "document" : "image";
+  const { items, total } = await searchMediaForPicker(String(q ?? "").slice(0, 100), safePage, safeKind);
   return {
     items: items.map((m) => ({
       id: m.id,
       file_name: m.file_name,
       alt_text: m.alt_text,
       mime_type: m.mime_type,
+      bucket: m.bucket,
       previewUrl: m.previewUrl,
     })),
     total,

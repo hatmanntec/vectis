@@ -10,6 +10,7 @@ import { Panel } from "@/components/cms/page-parts";
 import { FormAlert, SubmitButton } from "@/components/cms/form-bits";
 import { Button } from "@/components/ui/button";
 import type { ActionResult } from "@/lib/cms/results";
+import { ActionForm } from "@/components/cms/action-form";
 
 type SectorValues = {
   name: string;
@@ -44,7 +45,7 @@ export function SectorForm({
   }, [result, router]);
 
   return (
-    <form action={formAction} className="space-y-6" noValidate>
+    <ActionForm action={formAction} className="space-y-6" noValidate>
       {result && !result.ok && !result.fieldErrors ? <FormAlert error={result.error} /> : null}
 
       <Panel title="Details">
@@ -100,6 +101,6 @@ export function SectorForm({
           <Link href="/admin/sectors">Cancel</Link>
         </Button>
       </div>
-    </form>
+    </ActionForm>
   );
 }

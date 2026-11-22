@@ -7,13 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormAlert, SubmitButton } from "@/components/cms/form-bits";
 import { signIn, type FormState } from "@/lib/auth/actions";
+import { ActionForm } from "@/components/cms/action-form";
 
 export function LoginForm() {
   const next = useSearchParams().get("next") ?? "";
   const [state, action] = useActionState<FormState, FormData>(signIn, {});
 
   return (
-    <form action={action} className="space-y-5" noValidate>
+    <ActionForm action={action} className="space-y-5" noValidate>
       <input type="hidden" name="next" value={next} />
       <FormAlert error={state.error} />
 
@@ -36,6 +37,6 @@ export function LoginForm() {
       </div>
 
       <SubmitButton pendingText="Signing in…">Sign in</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }

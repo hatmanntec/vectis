@@ -5,12 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormAlert, SubmitButton } from "@/components/cms/form-bits";
 import { updatePassword, type FormState } from "@/lib/auth/actions";
+import { ActionForm } from "@/components/cms/action-form";
 
 export function ResetForm() {
   const [state, action] = useActionState<FormState, FormData>(updatePassword, {});
 
   return (
-    <form action={action} className="space-y-5" noValidate>
+    <ActionForm action={action} className="space-y-5" noValidate>
       <FormAlert error={state.error} />
       <div className="space-y-2">
         <Label htmlFor="password">New password</Label>
@@ -30,6 +31,6 @@ export function ResetForm() {
         <Input id="confirm" name="confirm" type="password" autoComplete="new-password" required />
       </div>
       <SubmitButton pendingText="Saving…">Save new password</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }
