@@ -8,9 +8,49 @@ The running record of what has been built. Newest milestone first.
 | --- | --- |
 | Phase 1: Architecture | Approved (22 Nov 2026) |
 | M1: Project skeleton | Done and live on Vercel (22 Nov 2026) |
-| M2: Database | **Done**, waiting for you to run the database push and add the Vercel settings |
-| M3: Authentication | Next |
-| M4–M11: CMS modules | — |
+| M2: Database | Done and live (22 Nov 2026) |
+| M3: Authentication | **Done**, waiting for the Supabase login settings and the first administrator (SETUP Part 5) |
+| M4: CMS shell and shared parts | Next |
+| M5–M11: CMS modules | — |
+
+## M3: Authentication (22 Nov 2026)
+
+**Built**
+
+- `proxy.ts`: runs before every `/admin` request. It renews the login session, sends signed-out visitors to the login page, and marks CMS pages "never index, never cache".
+- `lib/auth/admin.ts`: `getAdminAccess()` / `requireAdmin()`, the server-side check used by every CMS page and action (signed out / not an admin / needs two-step / full access). Also `safeNextPath()`, which stops crafted links from redirecting elsewhere after login.
+- `lib/auth/actions.ts`: sign in, two-step setup and verification, forgotten password, new password and sign out. All run on the server with Zod validation and deliberately general error messages.
+- Screens under `/admin`:
+  - `login`: email and password
+  - `setup-two-step`: first-time authenticator setup with a QR code or a typed key
+  - `verify`: the 6-digit code at every sign-in
+  - `forgot-password` and `reset-password`: a reset link, which still needs the code when two-step is set up
+  - `no-access`: for signed-in accounts that aren't administrators
+- `/admin/auth/confirm`: where reset-email links land. Both Supabase link formats are handled.
+- A CMS frame (header with logo, administrator name and Sign out) and a temporary dashboard page. The full dashboard and navigation come in M4.
+- A Content-Security-Policy header site-wide. The strictest "nonce" form isn't compatible with this site's caching mode (Next.js documents this), so inline scripts from Next.js are allowed.
+- shadcn/ui `button`, `input`, `label`. Libraries: `zod`, `radix-ui`, `class-variance-authority`, `lucide-react`.
+
+**Security rules enforced**
+
+- Public sign-up is off (Supabase setting), and an account becomes an administrator only through the SQL Editor.
+- The CMS needs **password + authenticator code**. With a password alone, the CMS stays closed, and adding a second authenticator is refused.
+- Non-admin accounts are signed straight back out.
+- Password changes need the authenticator code too; new passwords need at least 12 characters.
+- The database applies the same checks again (`is_admin()` requires two-step), so even a coding mistake couldn't open the data.
+
+**Checked before delivery**
+
+- Type-check, lint and production build pass.
+- **32 automated browser checks passed (twice in a row)** in a real Chrome browser, against a stand-in that answers like Supabase's login service, with real 6-digit authenticator codes:
+  - signed-out redirects, a wrong password, and a non-admin refused
+  - first-time setup with QR and code, wrong codes refused, the dashboard opening
+  - password alone not opening the CMS or adding an authenticator
+  - sign out, and later sign-ins asking for the code
+  - crafted redirect links ignored
+  - forgotten password: the same reply for any email, the link needing the code, password rules, the new password working, links single-use
+  - the phone-width layout, and no browser errors
+- **Not tested here:** the real Supabase login service. This environment didn't allow running it. The stand-in follows Supabase's documented behaviour, and the first real test is your first sign-in (SETUP Part 5.6). Testing found one real-world issue that is now fixed: Supabase's QR code format can show as a broken image in Chrome, so it's converted to a format every browser displays.
 
 ## M2: Database (22 Nov 2026)
 

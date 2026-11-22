@@ -1,11 +1,41 @@
 import type { NextConfig } from "next";
 
 /**
- * Baseline security headers, sent with every response.
- * A full Content-Security-Policy is added in milestone M3, together with
- * authentication, once the Supabase domains it must allow are known.
+ * Content-Security-Policy: tells browsers which sources a page may load
+ * scripts, images, styles and connections from. Anything else is blocked,
+ * which limits the damage if malicious content ever got onto a page.
+ *
+ * Note: the stricter "nonce" form of this policy can't be used with the
+ * caching mode this site uses (Next.js documents the two as incompatible),
+ * so inline scripts from Next.js itself are allowed. React escapes all
+ * content and the site never inserts raw HTML, which is the main defence.
  */
+const isDev = process.env.NODE_ENV === "development";
+const supabaseOrigin = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").origin;
+  } catch {
+    return "";
+  }
+})();
+
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  "style-src 'self' 'unsafe-inline'",
+  `img-src 'self' blob: data: ${supabaseOrigin}`.trim(),
+  "font-src 'self'",
+  `connect-src 'self' ${supabaseOrigin}`.trim(),
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  "upgrade-insecure-requests",
+].join("; ");
+
+/** Security headers, sent with every response. */
 const securityHeaders = [
+  { key: "Content-Security-Policy", value: contentSecurityPolicy },
   // Stop other sites from showing VECTIS pages (including the CMS) inside a frame.
   { key: "X-Frame-Options", value: "DENY" },
   // Stop browsers from guessing file types (blocks some upload-based attacks).

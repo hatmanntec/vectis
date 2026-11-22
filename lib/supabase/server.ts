@@ -15,8 +15,10 @@ import { supabaseEnv } from "./env";
  * Create a new one for every request; never share it between requests.
  */
 export async function createSupabaseServerClient() {
-  const { url, key } = supabaseEnv();
+  // Read the cookies first: this marks the page as "per visitor", so Next.js
+  // never tries to run it ahead of time during the build.
   const cookieStore = await cookies();
+  const { url, key } = supabaseEnv();
 
   return createServerClient<Database>(url, key, {
     cookies: {
