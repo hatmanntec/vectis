@@ -7,5 +7,7 @@ The VECTIS corporate website and its content management system.
 - Tailwind CSS v4 + shadcn/ui
 - Hosted on Vercel
 
+CMS modules follow one pattern: see "How a new module is built" in `docs/PROGRESS.md`.
+
 Brand rules: the name is always **VECTIS**. The logo in `public/brand/vectis-logo.jpg`
 is never edited, recoloured, cropped or redrawn. Colours are defined once, in `app/globals.css`.

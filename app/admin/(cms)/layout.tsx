@@ -1,35 +1,46 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import { LogOut } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
+import { DesktopSidebar, MobileMenu } from "@/components/cms/sidebar";
+import { CmsToaster, NoticeFromUrl } from "@/components/cms/toaster";
 import { requireAdmin } from "@/lib/auth/admin";
 import { signOut } from "@/lib/auth/actions";
 
 /**
- * The frame around every CMS page (the full sidebar arrives in M4).
- * The frame itself shows nothing private; the signed-in name loads inside a
- * boundary after the server has confirmed the administrator. Each page checks
- * access again for itself.
+ * The frame around every CMS page: sidebar (a slide-out menu on phones),
+ * top bar with the administrator's name and Sign out, and notifications.
+ *
+ * The frame shows nothing private by itself; the name loads after the
+ * server confirms the administrator. Each page also checks access itself.
  */
 export default function CmsLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-full flex-1 flex-col">
-      <div className="h-1.5 bg-indigo" aria-hidden />
-      <header className="border-b border-border bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <Link href="/admin" className="flex items-center gap-3" aria-label="VECTIS CMS home">
-            <Logo width={104} priority />
-            <span className="hidden border-l border-border pl-3 text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase sm:inline">
-              Content Management
-            </span>
-          </Link>
-          <Suspense fallback={<span className="text-sm text-muted-foreground">…</span>}>
-            <AdminBadge />
-          </Suspense>
-        </div>
-      </header>
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">{children}</main>
+    <div className="flex min-h-dvh flex-1">
+      <DesktopSidebar logo={<Logo width={150} priority className="mx-auto block w-fit" />} />
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-30 border-b border-border bg-white/95 backdrop-blur">
+          <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-8">
+            <div className="flex items-center gap-3">
+              <MobileMenu logo={<Logo width={130} className="mx-auto block w-fit" />} />
+              <span className="text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase">
+                Content Management
+              </span>
+            </div>
+            <Suspense fallback={<span className="text-sm text-muted-foreground">…</span>}>
+              <AdminBadge />
+            </Suspense>
+          </div>
+        </header>
+
+        <main className="w-full max-w-6xl flex-1 px-4 py-8 sm:px-8 sm:py-10">{children}</main>
+      </div>
+
+      <CmsToaster />
+      <Suspense>
+        <NoticeFromUrl />
+      </Suspense>
     </div>
   );
 }
@@ -43,9 +54,9 @@ async function AdminBadge() {
         <span className="block text-xs text-muted-foreground">{admin.email}</span>
       </span>
       <form action={signOut}>
-        <Button type="submit" variant="outline" size="sm">
+        <Button type="submit" variant="outline" size="sm" aria-label="Sign out">
           <LogOut aria-hidden />
-          Sign out
+          <span className="hidden sm:inline">Sign out</span>
         </Button>
       </form>
     </div>

@@ -9,9 +9,51 @@ The running record of what has been built. Newest milestone first.
 | Phase 1: Architecture | Approved (22 Nov 2026) |
 | M1: Project skeleton | Done and live on Vercel (22 Nov 2026) |
 | M2: Database | Done and live (22 Nov 2026) |
-| M3: Authentication | **Done** (password-only since M3.1), waiting for the Supabase login settings and the first administrator (SETUP Part 5) |
-| M4: CMS shell and shared parts | Next |
-| M5–M11: CMS modules | — |
+| M3: Authentication | Done (password-only since M3.1) |
+| M4: CMS shell, shared parts, Sectors, Audit log | **Done** (22 Nov 2026) |
+| M5: Settings and Media Library | Next |
+| M6–M11: remaining CMS modules | — |
+
+## M4: CMS shell, shared building blocks, Sectors, Audit log (22 Nov 2026)
+
+**Built**
+
+- **CMS frame:** an indigo sidebar with the logo on a white panel, and a slide-out menu on phones.
+  Modules not built yet are shown greyed out with their milestone (no dead buttons); switch one on in `lib/cms/nav.ts`.
+- **Dashboard:** real counts (companies, investments, projects, published news, drafts, unread enquiries),
+  recently changed records and recent activity from the audit trail. There are no invented figures, and empty states show where there's nothing yet.
+- **Shared building blocks**, used by every future module:
+  - `lib/cms/list.ts`: search, filter, sort and page number kept in the page address (bookmarkable), checked against allow-lists.
+  - `lib/cms/results.ts`: plain-English messages for database errors (duplicate web address, record still in use, etc.).
+  - `lib/cms/status.ts`: Draft / Published / Scheduled / Archived, Nigerian-time dates, slug generation.
+  - `components/cms/`: page header, data table parts (sortable headings, pages), search and filter bar, status badge,
+    empty states, loading placeholders, confirmation dialogs, notifications, and form fields with character counters and the auto web address.
+  - shadcn/ui: table, badge, alert-dialog, textarea, sheet, dropdown-menu, skeleton, separator; `sonner` for notifications.
+- **Sectors module** (`features/sectors/`, `/admin/sectors`): the reference implementation for all later modules.
+  List with search, status filter, sorting and pages. Create and edit with validation. Publish, unpublish,
+  archive, restore, and permanent delete (archived only, and refused while still in use).
+  Sectors was moved into M4 from M5.
+- **Audit log viewer** (`/admin/audit-log`): every change, newest first, filter by type and action, search, and
+  "old → new" details for each changed field. Read-only.
+
+**Checked before delivery**
+
+- Type-check, lint and production build pass.
+- **45 automated browser checks, passed three times in a row**, run against the real VECTIS database schema
+  (real security rules, triggers and audit trail) through a test stand-in for Supabase's API:
+  - dashboard figures, the sidebar and empty states
+  - validation errors, the auto web address, create, a duplicate address refused, edit and save
+  - publish and unpublish (confirmed at database level as visible or invisible to the public)
+  - archive, the archived filter, restore, delete refused while in use and allowed once unused
+  - 25 records across 2 pages, search-as-you-type, sorting both ways
+  - audit entries with the administrator's email and old → new values
+  - the phone layout and menu, and signed-out and non-admin visitors blocked
+- The sign-in tests (23 checks) were re-run on the new layout and still pass.
+
+**How a new module is built** (pattern from Sectors): `features/<module>/schema.ts` (Zod rules),
+`queries.ts` (reads, starting with `requireAdmin()`), `actions.ts` (writes, starting with `requireAdmin()`),
+`components/<module>-form.tsx`; pages in `app/admin/(cms)/<module>/` (list, `new`, `[id]`), and a sidebar
+entry switched on in `lib/cms/nav.ts`.
 
 ## M3.1: Password-only sign-in (22 Nov 2026)
 
