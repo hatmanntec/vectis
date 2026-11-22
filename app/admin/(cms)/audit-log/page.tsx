@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { History, SearchX } from "lucide-react";
 import { ListToolbar } from "@/components/cms/list-toolbar";
@@ -11,6 +12,19 @@ import { AUDIT_LIST, AUDIT_TABLES, listAuditEntries } from "@/features/audit/que
 export const metadata: Metadata = { title: "Audit log" };
 
 const PATH = "/admin/audit-log";
+
+/** Where each kind of record is edited, so an entry can link back to it. */
+const RECORD_PAGE: Record<string, string> = {
+  companies: "/admin/companies",
+  investments: "/admin/investments",
+  projects: "/admin/projects",
+  news: "/admin/news",
+  leadership: "/admin/leadership",
+  pages: "/admin/pages",
+  sectors: "/admin/sectors",
+  media: "/admin/media",
+  enquiries: "/admin/enquiries",
+};
 
 const ACTION_LABEL = { insert: "Created", update: "Changed", delete: "Deleted" } as const;
 const ACTION_STYLE = {
@@ -92,7 +106,15 @@ async function AuditTable({ searchParams }: { searchParams: PageProps<"/admin/au
                       {ACTION_LABEL[e.action]}
                     </span>
                     <span className="text-muted-foreground">{AUDIT_TABLES[e.table_name] ?? e.table_name}</span>
-                    {e.record_label ? <span className="font-medium text-graphite">{e.record_label}</span> : null}
+                    {e.record_label ? (
+                      e.action !== "delete" && e.record_id && RECORD_PAGE[e.table_name] ? (
+                        <Link href={`${RECORD_PAGE[e.table_name]}/${e.record_id}`} className="font-medium text-indigo hover:underline">
+                          {e.record_label}
+                        </Link>
+                      ) : (
+                        <span className="font-medium text-graphite">{e.record_label}</span>
+                      )
+                    ) : null}
                   </div>
                   <ChangeDetails action={e.action} changes={e.changes} />
                 </td>

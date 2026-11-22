@@ -15,7 +15,7 @@ export const AUDIT_TABLES: Record<string, string> = {
   news: "News item",
   news_companies: "News company tag",
   leadership: "Leadership profile",
-  leadership_affiliations: "Leadership affiliation",
+  leadership_affiliations: "Leadership company role",
   pages: "Website page",
   media: "Media file",
   media_links: "Gallery / document link",

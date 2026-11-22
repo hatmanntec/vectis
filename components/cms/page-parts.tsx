@@ -125,7 +125,8 @@ export function Pagination({
   const to = Math.min(params.page * PAGE_SIZE, total);
   const linkClass =
     "inline-flex h-8 items-center border border-border bg-white px-3 text-sm hover:border-indigo hover:text-indigo";
-  const disabledClass = "inline-flex h-8 items-center border border-border px-3 text-sm text-muted-foreground opacity-50";
+  // Readable (not faded) so it meets contrast rules; the dashed border shows it can't be used.
+  const disabledClass = "inline-flex h-8 cursor-default items-center border border-dashed border-border px-3 text-sm text-muted-foreground";
 
   return (
     <nav aria-label="Pages" className="mt-4 flex items-center justify-between gap-4 text-sm text-muted-foreground">
@@ -138,7 +139,7 @@ export function Pagination({
             Previous
           </Link>
         ) : (
-          <span className={disabledClass}>Previous</span>
+          <span className={disabledClass} aria-disabled="true">Previous</span>
         )}
         <span className="px-1">
           Page {params.page} of {pages}
@@ -148,7 +149,7 @@ export function Pagination({
             Next
           </Link>
         ) : (
-          <span className={disabledClass}>Next</span>
+          <span className={disabledClass} aria-disabled="true">Next</span>
         )}
       </div>
     </nav>

@@ -16,8 +16,30 @@ The running record of what has been built. Newest milestone first.
 | M7: Investments | Done (22 Nov 2026), no database update |
 | M8: Projects | Done (22 Nov 2026), no database update |
 | M9: News & Media | Done (22 Nov 2026), no database update |
-| M10: Leadership, Website Pages, Enquiries | **Done** (22 Nov 2026), no database update |
-| M11: Final CMS review and test pass | Next |
+| M10: Leadership, Website Pages, Enquiries | Done (22 Nov 2026), no database update |
+| M11: Final CMS review and test pass | **Done** (22 Nov 2026), no database update. **The CMS is complete.** |
+| Phase 4: Public website | Next (needs the corporate profile PDF and the approved transparent logo) |
+
+## M11: Final CMS review and test pass (22 Nov 2026)
+
+**Reviewed**
+
+- **Security:** every action that changes data checks the administrator first. The only exceptions are sign-in,
+  password reset and sign-out, which must work while signed out. No secret (service-role) key is used anywhere in
+  the app. Every database table has its access rules switched on, and every content table is recorded in the
+  audit trail.
+- **Consistency:** the audit log, dashboard and media library know about every module.
+
+**Improved**
+
+- **Audit log** entries now link to the record they describe (except deleted ones).
+- **Accessibility:** every CMS screen (30 in total, including sign-in) was scanned with axe-core against WCAG 2.1
+  A/AA, and now has no issues. Fixes: the side menu's group headings had slightly too little contrast, and the
+  inactive Previous/Next page buttons were too faint to read.
+- **New guide:** `docs/CMS-GUIDE.md`, a plain-English guide to using the CMS, including the order for entering content.
+
+**Tested:** all suites on the final build. Browser: 317 of 317 (sign-in 23, M4 45, M5 38, M6 34, M7 43, M8 37,
+M9 45, M10 52). Database rules: 69 of 69. Accessibility: 30 of 30 screens clean.
 
 ## M10: Leadership, Website Pages, Enquiries (22 Nov 2026)
 

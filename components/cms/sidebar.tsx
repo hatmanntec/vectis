@@ -33,7 +33,7 @@ function NavItems({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
     <nav aria-label="CMS" className="space-y-6 px-3 py-6">
       {NAV.map((group) => (
         <div key={group.label}>
-          <p className="mb-2 px-3 text-[11px] font-medium tracking-[0.18em] text-ivory/50 uppercase">{group.label}</p>
+          <p className="mb-2 px-3 text-[11px] font-medium tracking-[0.18em] text-ivory/65 uppercase">{group.label}</p>
           <ul className="space-y-0.5">
             {group.items.map((item) => {
               const Icon = item.icon;
