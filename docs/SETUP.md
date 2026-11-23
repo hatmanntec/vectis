@@ -168,15 +168,9 @@ where id = (select id from auth.users where email = 'admin@example.com');
 (no authenticator app). The password is therefore the only key: keep it long, unique and private,
 and protect the vectisgp@gmail.com Gmail and Supabase accounts with their own two-step verification.
 
-## Loading the initial website content (once)
+## Loading the initial website content
 
-1. Make sure the latest code is pushed and Vercel has finished deploying.
-2. In Supabase, open **SQL Editor → New query**.
-3. Open `supabase/content/initial_content.sql` on your Mac (in TextEdit or VS Code), copy **all** of it, paste it
-   into the editor, and click **Run**.
-4. The last result shows three numbers: **15 sectors, 11 companies, 7 published pages** (more if you had already
-   added your own).
-5. Open your website: the home page, About, Businesses, Investments and Contact are now live. Edit anything in
-   the CMS as usual.
-
-Running it a second time does no harm: it skips everything that already exists.
+The content is database update `supabase/migrations/0018_initial_content.sql`, applied like any other update
+(see "When a milestone includes a database update" above): `db push --remote --dry-run`, then `db push --remote`.
+It loads 15 industries, VECTIS and its 10 businesses, and 8 published pages. It never overwrites anything already
+entered in the CMS and never creates duplicates. Don't paste it into the SQL Editor: there's no need.

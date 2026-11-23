@@ -19,14 +19,16 @@ The running record of what has been built. Newest milestone first.
 | M10: Leadership, Website Pages, Enquiries | Done (22 Nov 2026), no database update |
 | M11: Final CMS review and test pass | **Done** (22 Nov 2026), no database update. **The CMS is complete.** |
 | Phases 4–7: Public website, SEO, accessibility, launch readiness | **Done** (23 Nov 2026), no database update |
-| Initial website content | **Ready** (23 Nov 2026): `supabase/content/initial_content.sql`, run once in Supabase |
+| Initial website content | **Ready** (23 Nov 2026): database update 0018, applied with `db push` |
 | Still to enter in the CMS | Companies invested in, leadership, projects, news, contact details, photos |
 
 ## Initial website content (23 Nov 2026)
 
-`supabase/content/initial_content.sql` loads VECTIS's first content, written from the VECTIS Group corporate
-profile (Oct 2026) and the master brief, with "Vectis Group" written as "VECTIS" throughout. Run it once in
-Supabase → SQL Editor. Everything it loads is **published**.
+Database update `0018_initial_content.sql` loads VECTIS's first content, written from the VECTIS Group corporate
+profile (Oct 2026) and the master brief, with "Vectis Group" written as "VECTIS" throughout. It is applied with
+`supabase db push`, like other database updates. Everything it loads is **published**. (A first version meant for
+pasting into the SQL Editor failed there: copying had turned straight quotes into curly ones. All text in the file
+now uses $v$…$v$ quoting, so even a pasted copy can't break.)
 
 - **Settings:** tagline ("Diversified investments. Integrated industries. Sustainable growth.") and SEO defaults.
 - **Industries:** the profile's fifteen sectors, each with a one-line description.
@@ -40,8 +42,13 @@ Supabase → SQL Editor. Everything it loads is **published**.
 - **Not included:** companies invested in (Pillar Oil, Akata Energy), leadership profiles and the Leadership page,
   projects, news, contact details (the profile has placeholders) and photos.
 - **Safe to run again:** it never overwrites anything already entered (pages are filled only while still empty)
-  and never creates duplicates. It was tested twice on a fresh copy of the database, and every loaded record then
-  opened and saved normally in the CMS.
+  and never creates duplicates.
+- **Tested:**
+  - 12 checks in `test_0018`, plus the original 69 structure checks;
+  - applying it twice;
+  - a copy with every quote turned curly;
+  - a rehearsal of `supabase db push` itself;
+  - opening and saving every loaded record in the CMS.
 
 Code change in the same release: the business lists (home page and /businesses) now show VECTIS's businesses only.
 VECTIS itself keeps its own page at /businesses/vectis.
