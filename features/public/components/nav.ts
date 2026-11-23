@@ -5,6 +5,13 @@ export type NavLink = { href: string; label: string };
 /** A menu entry that opens a panel of links, arranged in titled columns. */
 export type NavGroup = {
   label: string;
+  /**
+   * The group's own page. When it is set, the menu item itself is a link to
+   * that page and a separate arrow opens the list of pages under it. It is
+   * left out when that page isn't published, and the item then only opens
+   * the list.
+   */
+  href?: string;
   /** Short line shown in the panel beside the links. */
   blurb: string;
   /** Optional "see everything" link shown under the blurb. */
@@ -42,6 +49,7 @@ export function mainNav(site: SiteMap, businesses: CompanyCard[]): NavItem[] {
   const items: (NavItem | false)[] = [
     collapse({
       label: "About",
+      href: site.core.has("about") ? "/about" : undefined,
       blurb: "Who VECTIS is, how it began in 1956, and how it is governed.",
       columns: [{ links: about }],
     }),
@@ -49,6 +57,7 @@ export function mainNav(site: SiteMap, businesses: CompanyCard[]): NavItem[] {
       collapse(
         {
           label: "Businesses",
+          href: "/businesses",
           blurb: "The VECTIS businesses, grouped by cluster.",
           overview: { href: "/businesses", label: "All businesses" },
           columns: businessColumns,

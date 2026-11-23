@@ -6,6 +6,34 @@ import { safeHref, type RichDoc, type RichNode } from "@/lib/cms/rich-text";
  * element from the stored JSON (never inserted as raw HTML), and links are
  * checked again before they are shown.
  */
+/** The plain words of a node and everything inside it. */
+function plain(n: RichNode): string {
+  return n.type === "text" ? (n.text ?? "") : (n.content ?? []).map(plain).join("");
+}
+
+/** A heading's address on the page, made from its own words. */
+export const headingId = (label: string) => `s-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`;
+
+/**
+ * The main headings in a page's text, used for the "on this page" index.
+ * Headings that repeat are listed once.
+ */
+export function richHeadings(doc: unknown): { id: string; label: string }[] {
+  const d = doc as RichDoc | null;
+  if (!d || !Array.isArray(d.content)) return [];
+  const seen = new Set<string>();
+  const out: { id: string; label: string }[] = [];
+  for (const n of d.content) {
+    if (n.type !== "heading" || n.attrs?.level === 3) continue;
+    const label = plain(n).trim();
+    const id = headingId(label);
+    if (!label || seen.has(id)) continue;
+    seen.add(id);
+    out.push({ id, label });
+  }
+  return out;
+}
+
 function renderText(n: RichNode, key: number): ReactNode {
   let out: ReactNode = n.text ?? "";
   for (const m of n.marks ?? []) {
@@ -36,8 +64,16 @@ function renderNode(n: RichNode, key: number): ReactNode {
       return <br key={key} />;
     case "paragraph":
       return <p key={key}>{kids}</p>;
-    case "heading":
-      return n.attrs?.level === 3 ? <h3 key={key}>{kids}</h3> : <h2 key={key}>{kids}</h2>;
+    case "heading": {
+      if (n.attrs?.level === 3) return <h3 key={key}>{kids}</h3>;
+      const label = plain(n).trim();
+      // The id lets the "on this page" index link to it.
+      return (
+        <h2 key={key} id={label ? headingId(label) : undefined} className="scroll-mt-32">
+          {kids}
+        </h2>
+      );
+    }
     case "bulletList":
       return <ul key={key}>{kids}</ul>;
     case "orderedList":

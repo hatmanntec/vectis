@@ -125,16 +125,38 @@ function Accordion({ group, pathname }: { group: NavGroup; pathname: string }) {
   const id = useId();
   return (
     <li className="border-t border-steel/70">
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-controls={id}
-        onClick={() => setOpen((o) => !o)}
-        className={`flex min-h-14 w-full items-center justify-between text-left font-serif text-2xl ${active ? "text-indigo" : "text-graphite"}`}
-      >
-        {group.label}
-        <ChevronDown aria-hidden className={`size-5 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
-      </button>
+      <div className="flex items-center justify-between gap-2">
+        {group.href ? (
+          // Tapping the name goes to its page; the arrow opens the list.
+          <Link
+            href={group.href}
+            aria-current={pathname === group.href ? "page" : undefined}
+            className={`flex min-h-14 flex-1 items-center font-serif text-2xl ${active ? "text-indigo" : "text-graphite"}`}
+          >
+            {group.label}
+          </Link>
+        ) : (
+          <button
+            type="button"
+            aria-expanded={open}
+            aria-controls={id}
+            onClick={() => setOpen((o) => !o)}
+            className={`flex min-h-14 flex-1 items-center text-left font-serif text-2xl ${active ? "text-indigo" : "text-graphite"}`}
+          >
+            {group.label}
+          </button>
+        )}
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={id}
+          aria-label={`${group.label} pages`}
+          onClick={() => setOpen((o) => !o)}
+          className={`-mr-3 flex size-14 items-center justify-center ${active ? "text-indigo" : "text-graphite"}`}
+        >
+          <ChevronDown aria-hidden className={`size-5 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+        </button>
+      </div>
       <div id={id} hidden={!open} className="pb-4">
         {group.overview ? <MenuLink link={group.overview} pathname={pathname} strong /> : null}
         {group.columns.map((col, i) => (

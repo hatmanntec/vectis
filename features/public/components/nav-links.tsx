@@ -21,6 +21,14 @@ const itemClass = (active: boolean) =>
     active ? "text-indigo after:bg-copper" : "text-graphite after:bg-transparent hover:text-indigo hover:after:bg-steel"
   }`;
 
+/** A group shown as its own link plus a separate arrow: the underline spans both. */
+const groupClass = (active: boolean) =>
+  `relative flex h-11 items-center after:absolute after:inset-x-3 after:bottom-1 after:h-0.5 after:transition-colors after:duration-200 ${
+    active ? "after:bg-copper" : "after:bg-transparent hover:after:bg-steel"
+  }`;
+const groupPart = (active: boolean) =>
+  `flex h-11 items-center text-[0.9375rem] font-medium transition-colors duration-200 ${active ? "text-indigo" : "text-graphite hover:text-indigo"}`;
+
 function DesktopNav({ items, pathname }: { items: NavItem[]; pathname: string }) {
   const [open, setOpen] = useState<string | null>(null);
   const [lastPath, setLastPath] = useState(pathname);
@@ -42,7 +50,7 @@ function DesktopNav({ items, pathname }: { items: NavItem[]; pathname: string })
           />
         ) : (
           <li key={item.href}>
-            <Link href={item.href} aria-current={pathname === item.href ? "page" : undefined} className={itemClass(isActive(item.href, pathname))}>
+            <Link href={item.href} data-nav-item aria-current={pathname === item.href ? "page" : undefined} className={itemClass(isActive(item.href, pathname))}>
               {item.label}
             </Link>
           </li>
@@ -53,11 +61,12 @@ function DesktopNav({ items, pathname }: { items: NavItem[]; pathname: string })
 }
 
 /**
- * A menu entry that opens a full-width panel. Built as a "disclosure" (a
- * button that shows and hides a list of links), the pattern recommended for
- * website menus: it opens on hover with a mouse, on click or tap, and with
- * Enter, Space or the down arrow; arrows move between links; Esc closes it
- * and returns to the button; moving focus or the pointer away closes it.
+ * A menu entry with a page of its own and a list of pages under it. The
+ * label is a link straight to its page; the arrow beside it shows and hides
+ * the list. (A group whose own page isn't published is the arrow alone.)
+ * The list opens on hover with a mouse, on click or tap, and with Enter,
+ * Space or the down arrow; arrows move between links; Esc closes it and
+ * returns to the arrow; moving focus or the pointer away closes it.
  */
 function Dropdown({
   group,
@@ -108,7 +117,9 @@ function Dropdown({
     if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "Home" && e.key !== "End") return;
     const all = links();
     const at = all.indexOf(document.activeElement as HTMLAnchorElement);
-    if (document.activeElement === button.current) {
+    // The down arrow opens the list from the label or from the arrow beside it.
+    const label = li.current?.querySelector("[data-nav-item]");
+    if (at < 0 && (document.activeElement === button.current || document.activeElement === label)) {
       if (e.key !== "ArrowDown") return;
       e.preventDefault();
       setOpen(true);
@@ -133,17 +144,44 @@ function Dropdown({
       onPointerEnter={(e) => e.pointerType === "mouse" && later(() => setOpen(true), 80)}
       onPointerLeave={(e) => e.pointerType === "mouse" && later(() => setOpen(false), 180)}
     >
-      <button
-        ref={button}
-        type="button"
-        aria-expanded={open}
-        aria-controls={id}
-        onClick={() => setOpen(!open)}
-        className={itemClass(active || open)}
-      >
-        {group.label}
-        <ChevronDown aria-hidden className={`size-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
-      </button>
+      {group.href ? (
+        // The item itself goes to its page; the arrow beside it opens the list.
+        <span className={groupClass(active || open)}>
+          <Link
+            href={group.href}
+            data-nav-item
+            aria-current={pathname === group.href ? "page" : undefined}
+            className={`${groupPart(active || open)} pr-0.5 pl-3`}
+          >
+            {group.label}
+          </Link>
+          <button
+            ref={button}
+            type="button"
+            aria-expanded={open}
+            aria-controls={id}
+            aria-label={`${group.label} pages`}
+            onClick={() => setOpen(!open)}
+            // 44 px wide, so the arrow is easy to tap on a touch screen.
+            className={`${groupPart(active || open)} w-11 justify-center`}
+          >
+            <ChevronDown aria-hidden className={`size-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+          </button>
+        </span>
+      ) : (
+        <button
+          ref={button}
+          type="button"
+          data-nav-item
+          aria-expanded={open}
+          aria-controls={id}
+          onClick={() => setOpen(!open)}
+          className={itemClass(active || open)}
+        >
+          {group.label}
+          <ChevronDown aria-hidden className={`size-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+        </button>
+      )}
       <div
         id={id}
         data-panel

@@ -4,8 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { getCorePage, listInvestments } from "@/features/public/data";
 import { pageMetadata } from "@/features/public/metadata";
-import { items, text } from "@/features/public/components/page-blocks";
-import { RichText } from "@/features/public/components/rich-text";
+import { PageBody, items, text } from "@/features/public/components/page-blocks";
 import { Container, PublicImage } from "@/features/public/components/bits";
 import { PageHero, SectionHead } from "@/features/public/components/editorial";
 import { RelationshipMap } from "@/features/public/components/relationship-map";
@@ -41,13 +40,7 @@ export default async function InvestmentPhilosophyPage() {
           </div>
         </Container>
       ) : null}
-      {page.content.body ? (
-        <Container className="pt-14 lg:pt-20">
-          <div className="reveal max-w-[42rem] lg:ml-[calc(5/12*100%)]">
-            <RichText doc={page.content.body} className="t-body" />
-          </div>
-        </Container>
-      ) : null}
+      <PageBody doc={page.content.body} bottom={false} />
 
       {principles.length ? (
         <section aria-labelledby="principles" className="section-y">

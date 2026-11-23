@@ -91,6 +91,8 @@ Its page also lists the company's investments, projects, news and people.
 - The 8 core pages each have their own fields. Core pages can be unpublished but never deleted.
 - Lists of companies, projects, news and people are filled in automatically from the other sections. You don't type them here.
 - **New page** creates an extra page, such as a privacy policy. Extra pages appear under About in the menu.
+- **Headings in Main text** become the "On this page" index beside the text, once a page has two or more of them.
+  Use Heading 2 for each section of a page.
 - **Governance > Accountability loop:** the stages of the loop, in order. The website draws them as a circle of
   arrows that returns to the first stage. Leave it empty to hide the drawing.
 - **Home > Banner image:** a photo shown in indigo behind the headline. Use licensed photography only, and never

@@ -30,6 +30,25 @@ The running record of what has been built. Newest milestone first.
 | Scroll-reveal motion system | **Done** (23 Nov 2026) |
 | Still to enter in the CMS | Leadership, projects, news, contact details, licensed stock photos |
 
+## "On this page" index beside the text (23 Nov 2026)
+
+Inner pages left a wide empty column beside the main text, which made short pages look unfinished. Now:
+
+- A page whose text has **two or more headings** shows an index of them in that column ("On this page"), numbered
+  and linked, which follows the reader down the page. It is built from the headings typed in the CMS, so adding or
+  renaming a heading changes it automatically.
+- A page with **fewer headings** has no index, and its text starts at the left instead of leaving the space empty.
+- Applies to About, Governance, the Foundation, Corporate History, extra pages, Our Businesses and Investments.
+
+## Menu items link to their own pages (23 Nov 2026)
+
+**About** and **Businesses** in the main menu used to open a list only. Each is now a link straight to its page
+(`/about`, `/businesses`), with a separate arrow beside it that shows and hides the list of pages under it. The
+same on phones: tapping the name goes to the page, tapping the arrow opens the list. The arrow is 44 px, a
+comfortable tap size. If the group's own page is ever unpublished, the item goes back to opening the list only,
+so the menu still never links to an empty page. Keyboard use is unchanged: the arrow or the down key opens the
+list, the arrow keys move through it, Esc closes it.
+
 ## Speed and search follow-up (23 Nov 2026)
 
 - **Detail pages built ahead of time:** every published business, investment, project, news item, leadership

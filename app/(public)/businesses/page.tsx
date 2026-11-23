@@ -5,8 +5,7 @@ import { notFound } from "next/navigation";
 import { getCorePage, listBusinesses, listSectors } from "@/features/public/data";
 import { pageMetadata } from "@/features/public/metadata";
 import { groupByCluster } from "@/features/public/clusters";
-import { text } from "@/features/public/components/page-blocks";
-import { RichText } from "@/features/public/components/rich-text";
+import { PageBody, text } from "@/features/public/components/page-blocks";
 import { Container, Nothing, PublicImage } from "@/features/public/components/bits";
 import { PageHero } from "@/features/public/components/editorial";
 
@@ -29,13 +28,7 @@ export default async function BusinessesPage({ searchParams }: PageProps<"/busin
           </div>
         </Container>
       ) : null}
-      {body ? (
-        <Container className="pt-14 lg:pt-20">
-          <div className="reveal max-w-[42rem] lg:ml-[calc(5/12*100%)]">
-            <RichText doc={body} className="t-body" />
-          </div>
-        </Container>
-      ) : null}
+      <PageBody doc={body} bottom={false} />
       <Suspense
         fallback={
           <Container className="py-16">
