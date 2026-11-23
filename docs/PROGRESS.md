@@ -674,3 +674,23 @@ A note for testing: a build made while the database is unreachable bakes
 every menu click. `run_e2e.sh` seeds the database before building for this
 reason. This is not a condition that occurs on Vercel, where the database is
 always reachable at build time.
+
+## Investment profiles: Pillar Oil and Akata Energy
+
+**Database (migration 0021).** Both companies invested in now have real
+content on their public investment pages, plus website, telephone and address
+on their company records.
+
+Sources: the Pillar Oil website (read November 2026) and the Akata Energy
+Company & Asset Profile dated December 2023. Nothing is invented.
+
+Deliberately left out, as either forward-looking or likely to be out of date,
+and the client's to confirm before they appear in public:
+
+- Akata's exact equity percentages in each field
+- reserve and volume estimates (Gaffney Cline, Dharmathan, STOOIIP, GIIP)
+- projected production rates
+- the Equatorial Guinea block EG 23 bid
+
+Both pages describe the companies invested in, never VECTIS ownership or
+control of them.
