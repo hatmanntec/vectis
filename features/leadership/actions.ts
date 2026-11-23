@@ -7,6 +7,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { describeDbError, type ActionResult } from "@/lib/cms/results";
 import type { Json } from "@/types/database";
 import { readLeaderForm, roleSchema } from "./schema";
+import { siteChanged } from "@/lib/cms/site-cache";
 
 /**
  * Saving, publishing, archiving and deleting leadership profiles, and the
@@ -35,6 +36,7 @@ export async function createLeader(_prev: ActionResult | null, formData: FormDat
     .select("id")
     .single();
   if (error || !data) return { ok: false, ...describeDbError(error, { slug: "web address" }) };
+  siteChanged();
   redirect(`/admin/leadership/${data.id}?notice=created`);
 }
 
@@ -52,6 +54,7 @@ export async function updateLeader(id: string, _prev: ActionResult | null, formD
     .select("id");
   if (error) return { ok: false, ...describeDbError(error, { slug: "web address" }) };
   if (!data?.length) return { ok: false, error: "This profile no longer exists." };
+  siteChanged();
   return { ok: true, message: "Changes saved." };
 }
 
@@ -62,6 +65,7 @@ export async function setLeaderStatus(id: string, status: "published" | "draft" 
   const { data, error } = await supabase.from("leadership").update({ status }).eq("id", id).select("id");
   if (error) return { ok: false, ...describeDbError(error) };
   if (!data?.length) return { ok: false, error: "This profile no longer exists." };
+  siteChanged();
   return { ok: true };
 }
 
@@ -72,6 +76,7 @@ export async function deleteLeader(id: string): Promise<ActionResult> {
   const { error, count } = await supabase.from("leadership").delete({ count: "exact" }).eq("id", id);
   if (error) return { ok: false, ...describeDbError(error) };
   if (!count) return { ok: false, error: "This profile no longer exists." };
+  siteChanged();
   redirect("/admin/leadership?notice=deleted");
 }
 
@@ -103,6 +108,7 @@ export async function addRole(leadershipId: string, _prev: ActionResult | null, 
     }
     return { ok: false, ...describeDbError(error) };
   }
+  siteChanged();
   return { ok: true, message: "Role added." };
 }
 
@@ -121,6 +127,7 @@ export async function updateRoleTitle(leadershipId: string, companyId: string, t
     .select("company_id");
   if (error) return { ok: false, ...describeDbError(error) };
   if (!data?.length) return { ok: false, error: "This role no longer exists." };
+  siteChanged();
   return { ok: true, message: "Role saved." };
 }
 
@@ -134,6 +141,7 @@ export async function removeRole(leadershipId: string, companyId: string): Promi
     .eq("leadership_id", leadershipId)
     .eq("company_id", companyId);
   if (error) return { ok: false, ...describeDbError(error) };
+  siteChanged();
   return { ok: true, message: "Role removed." };
 }
 
@@ -162,5 +170,6 @@ export async function moveRole(leadershipId: string, companyId: string, directio
       .eq("company_id", cid);
     if (error) return { ok: false, ...describeDbError(error) };
   }
+  siteChanged();
   return { ok: true };
 }

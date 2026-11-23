@@ -7,6 +7,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { describeDbError, type ActionResult } from "@/lib/cms/results";
 import type { Json } from "@/types/database";
 import { readCompanyForm, relationshipSchema } from "./schema";
+import { siteChanged } from "@/lib/cms/site-cache";
 
 /**
  * Saving, publishing, archiving and deleting companies, and their links to
@@ -62,6 +63,7 @@ export async function createCompany(_prev: ActionResult | null, formData: FormDa
 
   const sectorError = await saveSectors(supabase, data.id, sector_ids, primary_sector_id);
   // The company exists either way; if the sectors failed, say so on its page.
+  siteChanged();
   redirect(`/admin/companies/${data.id}?notice=${sectorError ? "created_sectors_failed" : "created"}`);
 }
 
@@ -88,6 +90,7 @@ export async function updateCompany(id: string, _prev: ActionResult | null, form
 
   const sectorError = await saveSectors(supabase, id, sector_ids, primary_sector_id);
   if (sectorError) return { ok: false, error: "The details were saved, but the sectors could not be. Please try again." };
+  siteChanged();
   return { ok: true, message: "Changes saved." };
 }
 
@@ -98,6 +101,7 @@ export async function setCompanyStatus(id: string, status: "published" | "draft"
   const { data, error } = await supabase.from("companies").update({ status }).eq("id", id).select("id");
   if (error) return { ok: false, ...describeDbError(error) };
   if (!data?.length) return { ok: false, error: "This company no longer exists." };
+  siteChanged();
   return { ok: true };
 }
 
@@ -119,6 +123,7 @@ export async function deleteCompany(id: string): Promise<ActionResult> {
     return { ok: false, ...describeDbError(error) };
   }
   if (!count) return { ok: false, error: "This company no longer exists." };
+  siteChanged();
   redirect("/admin/companies?notice=deleted");
 }
 
@@ -153,6 +158,7 @@ export async function addRelationship(companyId: string, _prev: ActionResult | n
     if (error.code === "23505") return { ok: false, error: "This link already exists." };
     return { ok: false, ...describeDbError(error) };
   }
+  siteChanged();
   return { ok: true, message: "Link added." };
 }
 
@@ -167,6 +173,7 @@ export async function setRelationshipVisibility(relationshipId: string, visible:
     .select("id");
   if (error) return { ok: false, ...describeDbError(error) };
   if (!data?.length) return { ok: false, error: "This link no longer exists." };
+  siteChanged();
   return { ok: true, message: visible ? "Now shown on the website." : "Hidden from the website." };
 }
 
@@ -177,5 +184,6 @@ export async function removeRelationship(relationshipId: string): Promise<Action
   const { error, count } = await supabase.from("company_relationships").delete({ count: "exact" }).eq("id", relationshipId);
   if (error) return { ok: false, ...describeDbError(error) };
   if (!count) return { ok: false, error: "This link was already removed." };
+  siteChanged();
   return { ok: true, message: "Link removed. Both companies are unchanged." };
 }

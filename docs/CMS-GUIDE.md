@@ -114,16 +114,30 @@ Its page also lists the company's investments, projects, news and people.
 - A file can't be deleted while it's in use. Its page shows exactly where it's used.
 - Use only approved photographs. Never alter the VECTIS logo.
 
-## 7. Lists: search, filters and sorting
+## 7. Your public website
+
+- The website shows **only what you publish**. Until the **Home** page is published, visitors see a simple
+  "being prepared" page with the logo.
+- **Menu items appear by themselves.** For example, "News" appears once a news item is published, and "About" once
+  the About VECTIS page is published.
+- **Changes appear straight away** after you save, publish or unpublish. Scheduled news appears at its time
+  (within about a minute).
+- **Outside companies** never get their own page under "Businesses". They appear only on the investment pages,
+  with the relationship described in VECTIS's own words.
+- **Contact form** messages arrive under **Enquiries**. Each sender can send up to 5 messages an hour.
+- **Logo:** the master logo is used exactly as supplied. When an approved transparent version is available,
+  upload it and choose it in **Settings → Approved alternative logo**.
+
+## 8. Lists: search, filters and sorting
 
 Every list has a search box, filters and sortable column headings. The page address keeps your search and filters,
 so you can bookmark a filtered list or refresh without losing your place.
 
-## 8. If something goes wrong
+## 9. If something goes wrong
 
 - **A red message under a field** means that field needs correcting before saving. Nothing has been saved yet.
 - **"Archive this record before deleting it"** means deletion is a two-step process, to prevent accidents.
 - **"Can't be deleted yet"** means something still depends on the record, such as a company with investments.
   The message says what.
-- **The page looks out of date** after a change: refresh the browser.
+- **The website looks out of date** after a change: refresh the browser. If it still looks old, wait one minute.
 - **Signed out unexpectedly:** sign in again; your saved work is never lost.

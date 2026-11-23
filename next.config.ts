@@ -50,6 +50,15 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  // Public website data is kept for up to a minute, then refreshed in the background.
+  // So CMS changes (and scheduled news) reach the website within about a minute.
+  cacheLife: {
+    // SITE_CACHE_SECONDS can shorten this (used by the automated tests).
+    site: (() => {
+      const seconds = Math.max(1, Number(process.env.SITE_CACHE_SECONDS) || 60);
+      return { stale: 30, revalidate: seconds, expire: 86400 };
+    })(),
+  },
   partialPrefetching: true,
   poweredByHeader: false,
   images: {

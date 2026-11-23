@@ -7,6 +7,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { describeDbError, type ActionResult } from "@/lib/cms/results";
 import type { Json } from "@/types/database";
 import { nigeriaTimeToIso, readNewsForm } from "./schema";
+import { siteChanged } from "@/lib/cms/site-cache";
 
 /**
  * Saving, publishing (now or at a chosen time), archiving and deleting news
@@ -56,6 +57,7 @@ export async function createNews(_prev: ActionResult | null, formData: FormData)
     .single();
   if (error || !data) return { ok: false, ...describeDbError(error, { slug: "web address" }) };
   const tagError = await setTags(supabase, data.id, company_ids);
+  siteChanged();
   redirect(`/admin/news/${data.id}?notice=${tagError ? "created_tags_failed" : "created"}`);
 }
 
@@ -75,6 +77,7 @@ export async function updateNews(id: string, _prev: ActionResult | null, formDat
   if (!data?.length) return { ok: false, error: "This item no longer exists." };
   const tagError = await setTags(supabase, id, company_ids);
   if (tagError) return { ok: false, error: "The item was saved, but its company tags could not be updated. Please try again." };
+  siteChanged();
   return { ok: true, message: "Changes saved." };
 }
 
@@ -96,6 +99,7 @@ export async function setNewsStatus(id: string, status: "published" | "draft" | 
   const { data, error } = await supabase.from("news").update(change).eq("id", id).select("id");
   if (error) return { ok: false, ...describeDbError(error) };
   if (!data?.length) return { ok: false, error: "This item no longer exists." };
+  siteChanged();
   return { ok: true };
 }
 
@@ -126,5 +130,6 @@ export async function deleteNews(id: string): Promise<ActionResult> {
   const { error, count } = await supabase.from("news").delete({ count: "exact" }).eq("id", id);
   if (error) return { ok: false, ...describeDbError(error) };
   if (!count) return { ok: false, error: "This item no longer exists." };
+  siteChanged();
   redirect("/admin/news?notice=deleted");
 }

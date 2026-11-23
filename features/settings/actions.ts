@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { describeDbError, type ActionResult } from "@/lib/cms/results";
 import { readSettingsForm, SOCIAL_NETWORKS } from "./schema";
+import { siteChanged } from "@/lib/cms/site-cache";
 
 export async function updateSettings(_prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
   await requireAdmin();
@@ -29,5 +30,6 @@ export async function updateSettings(_prev: ActionResult | null, formData: FormD
     .select("id");
   if (error) return { ok: false, ...describeDbError(error) };
   if (!data?.length) return { ok: false, error: "The settings could not be saved. Try signing in again." };
+  siteChanged();
   return { ok: true, message: "Settings saved." };
 }

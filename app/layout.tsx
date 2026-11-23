@@ -6,6 +6,8 @@ import "./globals.css";
 // Fonts are self-hosted from npm packages (no request to Google at build or run time).
 
 export const metadata: Metadata = {
+  // The site's public address (set in Vercel), used to build full links for sharing and search engines.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: {
     default: "VECTIS",
     template: "%s · VECTIS",

@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/auth/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { describeDbError, type ActionResult } from "@/lib/cms/results";
 import { fieldErrorsFrom, readSectorForm } from "./schema";
+import { siteChanged } from "@/lib/cms/site-cache";
 
 /**
  * Saving, publishing, archiving and deleting sectors.
@@ -28,6 +29,7 @@ export async function createSector(_prev: ActionResult | null, formData: FormDat
   const { data, error } = await supabase.from("sectors").insert(parsed.data).select("id").single();
   if (error || !data) return { ok: false, ...describeDbError(error, UNIQUE) };
 
+  siteChanged();
   redirect(`/admin/sectors/${data.id}?notice=created`);
 }
 
@@ -43,6 +45,7 @@ export async function updateSector(id: string, _prev: ActionResult | null, formD
   const { data, error } = await supabase.from("sectors").update(parsed.data).eq("id", id).select("id");
   if (error) return { ok: false, ...describeDbError(error, UNIQUE) };
   if (!data?.length) return { ok: false, error: "This sector no longer exists." };
+  siteChanged();
   return { ok: true, message: "Changes saved." };
 }
 
@@ -61,6 +64,7 @@ export async function setSectorStatus(id: string, status: "published" | "draft" 
   const { data, error } = await supabase.from("sectors").update({ status }).eq("id", id).select("id");
   if (error) return { ok: false, ...describeDbError(error) };
   if (!data?.length) return { ok: false, error: "This sector no longer exists." };
+  siteChanged();
   return { ok: true, message: statusMessages[status] };
 }
 
@@ -81,5 +85,6 @@ export async function deleteSector(id: string): Promise<ActionResult> {
     return { ok: false, ...describeDbError(error) };
   }
   if (!count) return { ok: false, error: "This sector no longer exists." };
+  siteChanged();
   redirect("/admin/sectors?notice=deleted");
 }

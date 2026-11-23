@@ -8,6 +8,7 @@ import { describeDbError, type ActionResult } from "@/lib/cms/results";
 import type { Json } from "@/types/database";
 import { readPageContent } from "./content";
 import { templateFor } from "./templates";
+import { siteChanged } from "@/lib/cms/site-cache";
 
 /**
  * Editing website pages. Core pages (Home, About…) can be edited and
@@ -81,6 +82,7 @@ export async function createPage(_prev: ActionResult | null, formData: FormData)
     }
     return { ok: false, ...describeDbError(error) };
   }
+  siteChanged();
   redirect(`/admin/pages/${data.id}?notice=created`);
 }
 
@@ -118,6 +120,7 @@ export async function updatePage(id: string, _prev: ActionResult | null, formDat
     return { ok: false, ...describeDbError(error) };
   }
   if (!data?.length) return { ok: false, error: "This page no longer exists." };
+  siteChanged();
   return { ok: true, message: "Changes saved." };
 }
 
@@ -132,6 +135,7 @@ export async function setPageStatus(id: string, status: "published" | "draft" | 
   const { data, error } = await supabase.from("pages").update({ status }).eq("id", id).select("id");
   if (error) return { ok: false, ...describeDbError(error) };
   if (!data?.length) return { ok: false, error: "This page no longer exists." };
+  siteChanged();
   return { ok: true };
 }
 
@@ -145,5 +149,6 @@ export async function deletePage(id: string): Promise<ActionResult> {
     return { ok: false, ...describeDbError(error) };
   }
   if (!count) return { ok: false, error: "This page no longer exists." };
+  siteChanged();
   redirect("/admin/pages?notice=deleted");
 }

@@ -18,7 +18,68 @@ The running record of what has been built. Newest milestone first.
 | M9: News & Media | Done (22 Nov 2026), no database update |
 | M10: Leadership, Website Pages, Enquiries | Done (22 Nov 2026), no database update |
 | M11: Final CMS review and test pass | **Done** (22 Nov 2026), no database update. **The CMS is complete.** |
-| Phase 4: Public website | Next (needs the corporate profile PDF and the approved transparent logo) |
+| Phases 4–7: Public website, SEO, accessibility, launch readiness | **Done** (23 Nov 2026), no database update |
+| Content entry by VECTIS | Next: in the CMS, following docs/CMS-GUIDE.md |
+
+## Phases 4–7: Public website (23 Nov 2026)
+
+The public website is built and reads everything from the CMS. Nothing on it is invented: each page shows
+only what has been entered and published, and menu items appear by themselves once there is something to show.
+
+**Pages**
+
+- **Home:** opening banner (heading, supporting line, banner photo), introduction, highlights, industries
+  (published sectors), businesses, projects, latest news (featured first), closing invitation. Until Home is
+  published, the original holding page is shown.
+- **About**, **Corporate History** (key dates as a timeline), **Governance**, **Investment Philosophy**
+  (principles and published investments), **Leadership** (grouped Board / Executive / Management),
+  **Contact**, and **extra pages** (e.g. /privacy-policy).
+- **Businesses** (`/businesses`, filter by industry) and a page per VECTIS business (`/businesses/<address>`):
+  description, facts, sectors, group companies, investments made or received, partnerships shown in the CMS,
+  projects, people and their roles, gallery, public documents and related news.
+- **Investments** (`/investments/<address>`): investor, company invested in, the nature in VECTIS's words,
+  status, date if confirmed. Confidential figures are never available to the website (database rule).
+- **Projects** (`/projects`, grouped by stage) and project pages with the timeline and a map link.
+- **News** (`/news`, filter by kind, pages of 12) and articles. Scheduled items appear by themselves at their time.
+- **Leadership profiles** (`/leadership/<address>`) with biography and roles.
+- A clear **not-found** page.
+
+**Rules built in**
+
+- **No implied ownership:** outside companies never get a page under /businesses. They appear only as the
+  company invested in, with VECTIS's own description of the relationship.
+- **Only published content**, read as an anonymous visitor, so the database itself refuses drafts, archived
+  records, private files, confidential figures and enquiries.
+- **Logo:** the master logo is shown exactly as supplied, on the white header. If an approved alternative logo is
+  chosen in Settings, it is used instead, with no code change needed.
+
+**Contact form:** name, email, telephone, organisation, subject, message. Checked on the server and again by the
+database (`submit_enquiry`). Each sender is limited to 5 messages an hour; a hidden field quietly ignores spam
+bots. Messages arrive in the CMS under Enquiries. The thank-you message can be set on the Contact page in the CMS.
+
+**Speed and freshness:** pages are built in advance and kept up to date in the background. Every change made in
+the CMS refreshes the website straight away (`lib/cms/site-cache.ts`), and everything is refreshed at least
+every minute, so scheduled news appears on time.
+
+**Search engines and sharing:** a title, description and sharing image on every page (each page's SEO fields,
+falling back to Settings); canonical addresses; `/sitemap.xml` listing every published page; `/robots.txt`
+keeping search engines out of /admin; organisation details (JSON-LD) on the home page.
+
+**Accessibility:** a skip-to-content link, a keyboard-friendly phone menu, alt text from the media library,
+and every public page scanned clean against WCAG 2.1 AA.
+
+**Tested:** 70 public-site browser checks, including:
+- privacy: no drafts, confidential figures or outside-company business pages;
+- CMS changes appearing straight away, and scheduled news appearing by itself;
+- the contact form, spam trap and rate limit;
+- the sitemap and robots.txt;
+- the layout on a phone screen;
+- the accessibility scan.
+
+All CMS suites re-run and passing.
+
+**Still to supply** (no code change needed): the corporate profile content (entered in the CMS) and, when
+approved, a transparent logo (upload it and choose it under Settings → Approved alternative logo).
 
 ## M11: Final CMS review and test pass (22 Nov 2026)
 

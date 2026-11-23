@@ -7,6 +7,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { describeDbError, type ActionResult } from "@/lib/cms/results";
 import type { Json } from "@/types/database";
 import { privateDetailsSchema, readInvestmentForm } from "./schema";
+import { siteChanged } from "@/lib/cms/site-cache";
 
 /**
  * Saving, publishing, archiving and deleting investments, and their
@@ -46,6 +47,7 @@ export async function createInvestment(_prev: ActionResult | null, formData: For
     .select("id")
     .single();
   if (error || !data) return { ok: false, ...describeDbError(error, { slug: "web address" }) };
+  siteChanged();
   redirect(`/admin/investments/${data.id}?notice=created`);
 }
 
@@ -68,6 +70,7 @@ export async function updateInvestment(id: string, _prev: ActionResult | null, f
     .select("id");
   if (error) return { ok: false, ...describeDbError(error, { slug: "web address" }) };
   if (!data?.length) return { ok: false, error: "This investment no longer exists." };
+  siteChanged();
   return { ok: true, message: "Changes saved." };
 }
 
@@ -78,6 +81,7 @@ export async function setInvestmentStatus(id: string, status: "published" | "dra
   const { data, error } = await supabase.from("investments").update({ status }).eq("id", id).select("id");
   if (error) return { ok: false, ...describeDbError(error) };
   if (!data?.length) return { ok: false, error: "This investment no longer exists." };
+  siteChanged();
   return { ok: true };
 }
 
@@ -88,6 +92,7 @@ export async function deleteInvestment(id: string): Promise<ActionResult> {
   const { error, count } = await supabase.from("investments").delete({ count: "exact" }).eq("id", id);
   if (error) return { ok: false, ...describeDbError(error) };
   if (!count) return { ok: false, error: "This investment no longer exists." };
+  siteChanged();
   redirect("/admin/investments?notice=deleted");
 }
 
@@ -117,6 +122,7 @@ export async function savePrivateDetails(investmentId: string, _prev: ActionResu
   if (empty) {
     const { error } = await supabase.from("investment_private_details").delete().eq("investment_id", investmentId);
     if (error) return { ok: false, ...describeDbError(error) };
+    siteChanged();
     return { ok: true, message: "Confidential details cleared." };
   }
 
@@ -130,5 +136,6 @@ export async function savePrivateDetails(investmentId: string, _prev: ActionResu
     const { error } = await supabase.from("investment_private_details").insert({ investment_id: investmentId, ...values });
     if (error) return { ok: false, ...describeDbError(error) };
   }
+  siteChanged();
   return { ok: true, message: "Confidential details saved." };
 }

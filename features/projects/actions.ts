@@ -7,6 +7,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { describeDbError, type ActionResult } from "@/lib/cms/results";
 import type { Json } from "@/types/database";
 import { readMilestoneForm, readProjectForm } from "./schema";
+import { siteChanged } from "@/lib/cms/site-cache";
 
 /**
  * Saving, publishing, archiving and deleting projects, and editing their
@@ -35,6 +36,7 @@ export async function createProject(_prev: ActionResult | null, formData: FormDa
     .select("id")
     .single();
   if (error || !data) return { ok: false, ...describeDbError(error, { slug: "web address" }) };
+  siteChanged();
   redirect(`/admin/projects/${data.id}?notice=created`);
 }
 
@@ -52,6 +54,7 @@ export async function updateProject(id: string, _prev: ActionResult | null, form
     .select("id");
   if (error) return { ok: false, ...describeDbError(error, { slug: "web address" }) };
   if (!data?.length) return { ok: false, error: "This project no longer exists." };
+  siteChanged();
   return { ok: true, message: "Changes saved." };
 }
 
@@ -62,6 +65,7 @@ export async function setProjectStatus(id: string, status: "published" | "draft"
   const { data, error } = await supabase.from("projects").update({ status }).eq("id", id).select("id");
   if (error) return { ok: false, ...describeDbError(error) };
   if (!data?.length) return { ok: false, error: "This project no longer exists." };
+  siteChanged();
   return { ok: true };
 }
 
@@ -72,6 +76,7 @@ export async function deleteProject(id: string): Promise<ActionResult> {
   const { error, count } = await supabase.from("projects").delete({ count: "exact" }).eq("id", id);
   if (error) return { ok: false, ...describeDbError(error) };
   if (!count) return { ok: false, error: "This project no longer exists." };
+  siteChanged();
   redirect("/admin/projects?notice=deleted");
 }
 
@@ -94,6 +99,7 @@ export async function addMilestone(projectId: string, _prev: ActionResult | null
   const sort_order = (last?.[0]?.sort_order ?? -1) + 1;
   const { error } = await supabase.from("project_milestones").insert({ project_id: projectId, sort_order, ...parsed.data });
   if (error) return { ok: false, ...describeDbError(error) };
+  siteChanged();
   return { ok: true, message: "Added to the timeline." };
 }
 
@@ -106,6 +112,7 @@ export async function updateMilestone(id: string, _prev: ActionResult | null, fo
   const { data, error } = await supabase.from("project_milestones").update(parsed.data).eq("id", id).select("id");
   if (error) return { ok: false, ...describeDbError(error) };
   if (!data?.length) return { ok: false, error: "This entry no longer exists." };
+  siteChanged();
   return { ok: true, message: "Timeline entry saved." };
 }
 
@@ -116,6 +123,7 @@ export async function removeMilestone(id: string): Promise<ActionResult> {
   const { error, count } = await supabase.from("project_milestones").delete({ count: "exact" }).eq("id", id);
   if (error) return { ok: false, ...describeDbError(error) };
   if (!count) return { ok: false, error: "This entry no longer exists." };
+  siteChanged();
   return { ok: true };
 }
 
@@ -144,6 +152,7 @@ export async function moveMilestone(id: string, direction: "up" | "down"): Promi
     const { error } = await supabase.from("project_milestones").update({ sort_order: order }).eq("id", mid);
     if (error) return { ok: false, ...describeDbError(error) };
   }
+  siteChanged();
   return { ok: true };
 }
 
@@ -163,5 +172,6 @@ export async function sortMilestonesByDate(projectId: string): Promise<ActionRes
     const { error } = await supabase.from("project_milestones").update({ sort_order: order }).eq("id", m.id);
     if (error) return { ok: false, ...describeDbError(error) };
   }
+  siteChanged();
   return { ok: true, message: "Timeline put in date order." };
 }

@@ -7,6 +7,7 @@ import { describeDbError, type ActionResult } from "@/lib/cms/results";
 import { isImage } from "@/lib/media/rules";
 import type { Database } from "@/types/database";
 import { OWNER_COLUMN, type LinkOwner } from "./link-owners";
+import { siteChanged } from "@/lib/cms/site-cache";
 
 /**
  * Galleries and supporting documents: attaching library files to a record
@@ -49,6 +50,7 @@ export async function addMediaLink(
   row[column] = ownerId;
   const { error } = await supabase.from("media_links").insert(row);
   if (error) return { ok: false, ...describeDbError(error) };
+  siteChanged();
   return { ok: true, message: role === "gallery" ? "Added to the gallery." : "Document attached." };
 }
 
@@ -59,6 +61,7 @@ export async function removeMediaLink(linkId: string): Promise<ActionResult> {
   const { error, count } = await supabase.from("media_links").delete({ count: "exact" }).eq("id", linkId);
   if (error) return { ok: false, ...describeDbError(error) };
   if (!count) return { ok: false, error: "That item was already removed." };
+  siteChanged();
   return { ok: true, message: "Removed. The file stays in the media library." };
 }
 
@@ -96,5 +99,6 @@ export async function moveMediaLink(linkId: string, direction: "up" | "down"): P
       if (error) return { ok: false, ...describeDbError(error) };
     }
   }
+  siteChanged();
   return { ok: true };
 }

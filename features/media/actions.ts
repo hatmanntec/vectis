@@ -9,6 +9,7 @@ import { checkFile, STORAGE_PATH_PATTERN } from "@/lib/media/rules";
 import { searchMediaForPicker } from "./queries";
 import { mediaIdsInContent } from "@/features/pages/content";
 import { templateFor } from "@/features/pages/templates";
+import { siteChanged } from "@/lib/cms/site-cache";
 
 /**
  * Media library actions. The browser uploads the file itself straight to
@@ -51,6 +52,7 @@ export async function registerUpload(input: RegisterInput): Promise<ActionResult
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.from("media").insert(parsed.data).select("id").single();
   if (error || !data) return { ok: false, ...describeDbError(error) };
+  siteChanged();
   return { ok: true, id: data.id };
 }
 
@@ -78,6 +80,7 @@ export async function updateMediaDetails(id: string, _prev: ActionResult | null,
   const { data, error } = await supabase.from("media").update(parsed.data).eq("id", id).select("id");
   if (error) return { ok: false, ...describeDbError(error) };
   if (!data?.length) return { ok: false, error: "This file no longer exists." };
+  siteChanged();
   return { ok: true, message: "Changes saved." };
 }
 
@@ -110,6 +113,7 @@ export async function deleteMedia(id: string): Promise<ActionResult> {
 
   // The library entry is gone; now remove the stored file.
   await supabase.storage.from(row.bucket).remove([row.path]);
+  siteChanged();
   redirect("/admin/media?notice=deleted");
 }
 
