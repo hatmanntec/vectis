@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getBusiness, listBusinesses } from "@/features/public/data";
+import { getBusiness, listBusinesses, sitemapEntries, withPlaceholder } from "@/features/public/data";
 import { PageSkeleton } from "@/features/public/components/bits";
 import { clusterOf, type Cluster } from "@/features/public/clusters";
 import { pageMetadata } from "@/features/public/metadata";
@@ -18,6 +18,12 @@ export async function generateMetadata({ params }: PageProps<"/businesses/[slug]
   const c = await getBusiness((await params).slug);
   if (!c) notFound();
   return pageMetadata({ title: c.name, seoTitle: c.seoTitle, description: c.seoDescription ?? c.shortDescription, image: c.cover ?? c.logo, path: `/businesses/${c.slug}` });
+}
+
+/** Published businesses are built ahead of time; new ones are built on their first visit. */
+export async function generateStaticParams() {
+  const { businesses } = await sitemapEntries();
+  return withPlaceholder(businesses.map((b) => ({ slug: b.slug })));
 }
 
 export default function BusinessPage({ params }: PageProps<"/businesses/[slug]">) {

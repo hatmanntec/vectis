@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { UserRound } from "lucide-react";
-import { getLeader, getSiteMap } from "@/features/public/data";
+import { getLeader, getSiteMap, sitemapEntries, withPlaceholder } from "@/features/public/data";
 import { PageSkeleton } from "@/features/public/components/bits";
 import { pageMetadata } from "@/features/public/metadata";
 import { RichText } from "@/features/public/components/rich-text";
@@ -15,6 +15,12 @@ export async function generateMetadata({ params }: PageProps<"/leadership/[slug]
   const p = await getLeader((await params).slug);
   if (!p) notFound();
   return pageMetadata({ title: p.full_name, seoTitle: p.seo_title, description: p.seo_description ?? p.job_title, image: p.photo, path: `/leadership/${p.slug}` });
+}
+
+/** Published items are built ahead of time; new ones are built on their first visit. */
+export async function generateStaticParams() {
+  const { leadership } = await sitemapEntries();
+  return withPlaceholder(leadership.map((r) => ({ slug: r.slug })));
 }
 
 export default function LeaderPage({ params }: PageProps<"/leadership/[slug]">) {

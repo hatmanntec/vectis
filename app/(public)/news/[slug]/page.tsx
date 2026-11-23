@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getNewsItem } from "@/features/public/data";
+import { getNewsItem, sitemapEntries, withPlaceholder } from "@/features/public/data";
 import { PageSkeleton } from "@/features/public/components/bits";
 import { pageMetadata } from "@/features/public/metadata";
 import { RichText } from "@/features/public/components/rich-text";
@@ -15,6 +15,12 @@ export async function generateMetadata({ params }: PageProps<"/news/[slug]">): P
   const n = await getNewsItem((await params).slug);
   if (!n) notFound();
   return pageMetadata({ title: n.title, seoTitle: n.seo_title, description: n.seo_description ?? n.excerpt, image: n.cover, path: `/news/${n.slug}`, type: "article" });
+}
+
+/** Published items are built ahead of time; new ones are built on their first visit. */
+export async function generateStaticParams() {
+  const { news } = await sitemapEntries();
+  return withPlaceholder(news.map((r) => ({ slug: r.slug })));
 }
 
 export default function NewsItemPage({ params }: PageProps<"/news/[slug]">) {

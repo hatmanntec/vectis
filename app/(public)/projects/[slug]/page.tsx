@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getProject } from "@/features/public/data";
+import { getProject, sitemapEntries, withPlaceholder } from "@/features/public/data";
 import { PageSkeleton } from "@/features/public/components/bits";
 import { pageMetadata } from "@/features/public/metadata";
 import { RichText } from "@/features/public/components/rich-text";
@@ -15,6 +15,12 @@ export async function generateMetadata({ params }: PageProps<"/projects/[slug]">
   const p = await getProject((await params).slug);
   if (!p) notFound();
   return pageMetadata({ title: p.title, seoTitle: p.seo_title, description: p.seo_description ?? p.summary, image: p.cover, path: `/projects/${p.slug}` });
+}
+
+/** Published items are built ahead of time; new ones are built on their first visit. */
+export async function generateStaticParams() {
+  const { projects } = await sitemapEntries();
+  return withPlaceholder(projects.map((r) => ({ slug: r.slug })));
 }
 
 export default function ProjectPage({ params }: PageProps<"/projects/[slug]">) {

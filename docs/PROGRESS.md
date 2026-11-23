@@ -30,6 +30,21 @@ The running record of what has been built. Newest milestone first.
 | Scroll-reveal motion system | **Done** (23 Nov 2026) |
 | Still to enter in the CMS | Leadership, projects, news, contact details, licensed stock photos |
 
+## Speed and search follow-up (23 Nov 2026)
+
+- **Detail pages built ahead of time:** every published business, investment, project, news item, leadership
+  profile and extra page is now prerendered at deploy (`generateStaticParams`). Their description tag sits in the
+  page head for every visitor, and they appear without a loading step. New items published later are built on
+  their first visit, and CMS edits still refresh them at once.
+- **Heading font preloaded:** Fraunces is served from `public/fonts` (with its SIL Open Font License) and preloaded
+  on public pages, so headings appear in Fraunces sooner.
+- **Tab icon:** the master logo file, unaltered, replaces the missing `favicon.ico`.
+- **Reveals start after the web fonts load**, so "already on screen" is judged on the final layout.
+- **Lighthouse (mobile)** after these changes: business profile, Investments and the investment profile 100 in all
+  four; Governance 99/100/100/100; Businesses 96/100/100/100; Home 94–100 between runs. The Foundation page scored
+  84 for performance in Lighthouse's simulation, but its largest element actually appears in 0.26–0.59 s on a
+  phone-sized screen with a 4× slower processor.
+
 ## Redesign Stages 5 and 6, and the motion system (23 Nov 2026)
 
 **Stage 5, inner pages.** About (values as a numbered list, links to the rest of About), Corporate History (a

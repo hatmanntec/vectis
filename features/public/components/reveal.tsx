@@ -66,12 +66,21 @@ export function RevealObserver() {
       });
     };
 
-    watch();
-    document.documentElement.classList.add("reveal-ready");
-    // Content that streams in later (filtered lists, profiles) is picked up too.
+    // Wait for the web fonts, so "already on screen" is judged on the final
+    // layout; until then nothing is hidden.
+    let cancelled = false;
     const mo = new MutationObserver(() => watch());
-    mo.observe(document.body, { childList: true, subtree: true });
+    const start = () => {
+      if (cancelled) return;
+      watch();
+      document.documentElement.classList.add("reveal-ready");
+      // Content that streams in later (filtered lists, profiles) is picked up too.
+      mo.observe(document.body, { childList: true, subtree: true });
+    };
+    if (document.fonts?.status === "loaded") start();
+    else document.fonts.ready.then(start, start);
     return () => {
+      cancelled = true;
       io.disconnect();
       mo.disconnect();
     };

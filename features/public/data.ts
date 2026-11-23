@@ -610,3 +610,12 @@ export async function sitemapEntries() {
     leadership: leadership.data ?? [],
   };
 }
+
+/**
+ * For generateStaticParams: the build needs at least one entry per route,
+ * so when nothing is published yet it gets a name that matches nothing
+ * (that build-time page is simply "not found").
+ */
+export function withPlaceholder(params: { slug: string }[]) {
+  return params.length ? params : [{ slug: "nothing-published-yet" }];
+}

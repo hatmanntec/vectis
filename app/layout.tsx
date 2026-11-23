@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "@fontsource-variable/ibm-plex-sans";
 import "@fontsource-variable/source-serif-4";
-import "@fontsource-variable/fraunces/opsz.css";
 import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
 import "./globals.css";
@@ -16,6 +15,9 @@ export const metadata: Metadata = {
     template: "%s · VECTIS",
   },
   description: "VECTIS — a diversified Nigerian business organisation. Est. 1956.",
+  // Browser tab icon: the master logo file itself, unaltered. A purpose-made
+  // icon can replace it once the brand owner supplies one.
+  icons: { icon: [{ url: "/brand/vectis-logo.jpg", type: "image/jpeg" }] },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

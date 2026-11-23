@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getInvestment } from "@/features/public/data";
+import { getInvestment, sitemapEntries, withPlaceholder } from "@/features/public/data";
 import { PageSkeleton } from "@/features/public/components/bits";
 import { pageMetadata } from "@/features/public/metadata";
 import { RichText } from "@/features/public/components/rich-text";
@@ -15,6 +15,12 @@ export async function generateMetadata({ params }: PageProps<"/investments/[slug
   const i = await getInvestment((await params).slug);
   if (!i) notFound();
   return pageMetadata({ title: i.investee.name, seoTitle: i.seo_title, description: i.seo_description ?? i.summary, image: i.logo, path: `/investments/${i.slug}` });
+}
+
+/** Published items are built ahead of time; new ones are built on their first visit. */
+export async function generateStaticParams() {
+  const { investments } = await sitemapEntries();
+  return withPlaceholder(investments.map((r) => ({ slug: r.slug })));
 }
 
 export default function InvestmentPage({ params }: PageProps<"/investments/[slug]">) {
