@@ -229,7 +229,7 @@ async function companySectors(client: Client, ids: string[]) {
   return out;
 }
 
-/** VECTIS and its own businesses and subsidiaries. Outside companies are never listed as businesses. */
+/** VECTIS's own businesses and subsidiaries. Outside companies are never listed as businesses. */
 export async function listBusinesses(): Promise<CompanyCard[]> {
   "use cache";
   cacheLife("site");
@@ -238,7 +238,8 @@ export async function listBusinesses(): Promise<CompanyCard[]> {
   const { data } = await client
     .from("companies")
     .select("id, name, slug, classification, short_description, logo_media_id, parent_company_id")
-    .neq("classification", "external")
+    // VECTIS itself (the parent organisation) has its own page; the lists show its businesses.
+    .in("classification", ["business", "subsidiary"])
     .order("sort_order")
     .order("name");
   const rows = data ?? [];

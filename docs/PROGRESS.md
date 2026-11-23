@@ -19,7 +19,32 @@ The running record of what has been built. Newest milestone first.
 | M10: Leadership, Website Pages, Enquiries | Done (22 Nov 2026), no database update |
 | M11: Final CMS review and test pass | **Done** (22 Nov 2026), no database update. **The CMS is complete.** |
 | Phases 4–7: Public website, SEO, accessibility, launch readiness | **Done** (23 Nov 2026), no database update |
-| Content entry by VECTIS | Next: in the CMS, following docs/CMS-GUIDE.md |
+| Initial website content | **Ready** (23 Nov 2026): `supabase/content/initial_content.sql`, run once in Supabase |
+| Still to enter in the CMS | Companies invested in, leadership, projects, news, contact details, photos |
+
+## Initial website content (23 Nov 2026)
+
+`supabase/content/initial_content.sql` loads VECTIS's first content, written from the VECTIS Group corporate
+profile (Oct 2026) and the master brief, with "Vectis Group" written as "VECTIS" throughout. Run it once in
+Supabase → SQL Editor. Everything it loads is **published**.
+
+- **Settings:** tagline ("Diversified investments. Integrated industries. Sustainable growth.") and SEO defaults.
+- **Industries:** the profile's fifteen sectors, each with a one-line description.
+- **Companies:** VECTIS (parent organisation, est. 1956) and ten businesses under it. That is the brief's eight,
+  plus VECTIS Capital and VECTIS Holdings, which the profile lists among the investment platforms. Each has a short
+  and a full description drawn from what the profile says about its platform or cluster, plus its sectors.
+- **Pages:** Home, About VECTIS, Corporate History, Our Businesses, Investment Philosophy, Governance and Contact,
+  plus an extra page for the VECTIS Foundation (/foundation).
+- **Written to fill gaps (please review):** the About page's five values, the Home page's linking sentences, and
+  the Contact page's thank-you message. These are drawn from themes in the profile, not quoted from it.
+- **Not included:** companies invested in (Pillar Oil, Akata Energy), leadership profiles and the Leadership page,
+  projects, news, contact details (the profile has placeholders) and photos.
+- **Safe to run again:** it never overwrites anything already entered (pages are filled only while still empty)
+  and never creates duplicates. It was tested twice on a fresh copy of the database, and every loaded record then
+  opened and saved normally in the CMS.
+
+Code change in the same release: the business lists (home page and /businesses) now show VECTIS's businesses only.
+VECTIS itself keeps its own page at /businesses/vectis.
 
 ## Phases 4–7: Public website (23 Nov 2026)
 
