@@ -23,8 +23,30 @@ The running record of what has been built. Newest milestone first.
 | Initial investments | **Ready** (23 Nov 2026): database update 0019 (Pillar Oil, Akata Energy; names only) |
 | Redesign, Stage 1: Foundations | **Done** (23 Nov 2026): fonts, design tokens, header with menus, footer with logo |
 | Redesign, Stage 2: Home page | **Done** (23 Nov 2026), no database update |
-| Redesign, Stages 3–6 | To do: businesses, investments + industries, inner pages, quality pass |
+| Redesign, Stage 3: Businesses | **Done** (23 Nov 2026), no database update |
+| Redesign, Stages 4–6 | To do: investments + industries, inner pages, quality pass |
 | Still to enter in the CMS | Leadership, projects, news, contact details, licensed stock photos |
+
+## Redesign Stage 3: Businesses (23 Nov 2026)
+
+The business directory and the business profile pages. **No CMS or database change.**
+
+- **Directory** (`/businesses`): a new page band (breadcrumb, title, lead) and the businesses grouped by cluster,
+  each cluster's name beside its list. Each business is a row: Fraunces name, one line, its sectors in mono, and a
+  copper rule that draws in on hover or keyboard focus. A logo shows only when one is uploaded (no more doubled
+  names). The industry filter is still a set of plain links, so it works without JavaScript and each filtered view
+  has its own address; screen readers hear how many businesses are shown.
+- **Profile** (`/businesses/<name>`): a header band in the cluster's colour (indigo for investment, teal for
+  energy, graphite otherwise), with the lineage VECTIS › Businesses › cluster › business. The description sits in a
+  reading column beside a facts rail (mono labels, hairlines, sticky on desktop). Then group companies,
+  investments, partnerships, projects, leadership, gallery, documents and news when published, and **related
+  businesses** from the same cluster.
+- **Shared pieces** (`editorial.tsx`): `PageHero`, `Crumbs` and `Block`, used by later stages. `Facts` and `Tag`
+  in `bits.tsx` now use the mono label style everywhere.
+
+**Tested:** public site 86 checks (2 new: lineage, grouping by cluster), all CMS suites and both accessibility
+scans pass; directory, a filtered view and four profiles at 375, 768, 1024 and 1440 px with the real content, with no
+sideways scrolling and no browser errors.
 
 ## Redesign Stage 2: Home page (23 Nov 2026)
 

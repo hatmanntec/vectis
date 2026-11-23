@@ -112,15 +112,16 @@ export function Documents({ docs }: { docs: Doc[] }) {
 }
 
 /** Small key–value facts (e.g. "Established 1956"). */
+/** Facts rail: a Plex Mono label above each value, on hairlines. Empty facts are left out. */
 export function Facts({ items }: { items: { label: string; value: ReactNode }[] }) {
   const shown = items.filter((i) => i.value !== null && i.value !== undefined && i.value !== "");
   if (!shown.length) return null;
   return (
-    <dl className="divide-y divide-border border border-border bg-white text-sm">
+    <dl className="border-t border-indigo">
       {shown.map((i) => (
-        <div key={i.label} className="grid grid-cols-[9rem_minmax(0,1fr)] gap-4 px-5 py-3">
-          <dt className="text-muted-foreground">{i.label}</dt>
-          <dd className="break-words text-graphite">{i.value}</dd>
+        <div key={i.label} className="border-b border-steel py-4">
+          <dt className="t-label text-[var(--ink-muted)]">{i.label}</dt>
+          <dd className="mt-1.5 text-[0.9375rem] break-words text-graphite">{i.value}</dd>
         </div>
       ))}
     </dl>
@@ -133,5 +134,5 @@ export function Tag({ children, tone = "teal" }: { children: ReactNode; tone?: "
     copper: "border-copper/40 text-copper",
     indigo: "border-indigo/30 text-indigo",
   }[tone];
-  return <span className={`inline-block border px-2 py-0.5 text-xs font-medium ${cls}`}>{children}</span>;
+  return <span className={`t-label inline-block border px-2.5 py-1 ${cls}`}>{children}</span>;
 }
