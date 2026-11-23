@@ -22,8 +22,39 @@ The running record of what has been built. Newest milestone first.
 | Initial website content | **Ready** (23 Nov 2026): database update 0018, applied with `db push` |
 | Initial investments | **Ready** (23 Nov 2026): database update 0019 (Pillar Oil, Akata Energy; names only) |
 | Redesign, Stage 1: Foundations | **Done** (23 Nov 2026): fonts, design tokens, header with menus, footer with logo |
-| Redesign, Stages 2–6 | To do: home, businesses, investments + industries, inner pages, quality pass |
+| Redesign, Stage 2: Home page | **Done** (23 Nov 2026), no database update |
+| Redesign, Stages 3–6 | To do: businesses, investments + industries, inner pages, quality pass |
 | Still to enter in the CMS | Leadership, projects, news, contact details, licensed stock photos |
+
+## Redesign Stage 2: Home page (23 Nov 2026)
+
+The home page rebuilt as one story in sections of different shapes. **No CMS or database change**: every word
+still comes from the CMS, and a section with nothing published behind it is left out (section numbers close up).
+
+1. **Hero** (indigo, full screen height): the Home page's main heading and supporting line, and the VECTIS value
+   chain (Capital → Assets → Operations → Markets → Impact) drawn as a copper line. If a banner image is uploaded
+   (CMS > Website Pages > Home > Banner image), it appears behind the text in indigo duotone.
+2. **Heritage** (ivory): an outsized "1956" beside the Introduction heading and text, linking to Corporate History.
+3. **Five clusters** (white): the Home page's Highlights as an index, 01–05. A cluster whose name matches one of
+   the five clusters opens (hover, tap or keyboard) to list its businesses.
+4. **Businesses** (ivory): a directory grouped by cluster. On large screens a detail panel follows the pointer or
+   keyboard focus; on phones and tablets it is an accordion.
+5. **Investments** (indigo): the relationship map, drawn from published investments (`relationship-map.tsx`,
+   reused in Stage 4). VECTIS businesses are solid boxes, companies invested in are dashed, so nothing suggests
+   ownership. A text list underneath is the version for screen readers, keyboards and phones. The four principles
+   from the Investment Philosophy page sit beside it.
+6. **Industries** (white): the sectors as a compact numbered index, each with the businesses in it.
+7. **Projects and news** (ivory, only when published): one featured item large, the rest as a short list.
+8. **Partnership** (graphite): the Home page's Closing invitation and a Contact button.
+
+Not built: the "ring of counterparties" from the proposal. The seven kinds of partner live inside the Closing
+invitation's sentence, and drawing them as a ring would mean copying that text into the code, where the CMS couldn't
+edit it.
+
+**Tested:** public site 84 checks (4 new: relationship map, value chain, section names, reduced motion), all CMS
+suites and both accessibility scans pass; home page at 375, 768, 1024 and 1440 px with the real content, no
+sideways scrolling and no browser errors. The test database stand-in had a fault that stalled builds when many
+pages loaded at once (now fixed; it was in the test tools, not the website).
 
 ## Redesign Stage 1: Foundations (23 Nov 2026)
 
