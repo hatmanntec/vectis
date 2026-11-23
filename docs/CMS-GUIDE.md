@@ -90,7 +90,12 @@ Its page also lists the company's investments, projects, news and people.
 **Website Pages.**
 - The 8 core pages each have their own fields. Core pages can be unpublished but never deleted.
 - Lists of companies, projects, news and people are filled in automatically from the other sections. You don't type them here.
-- **New page** creates an extra page, such as a privacy policy.
+- **New page** creates an extra page, such as a privacy policy. Extra pages appear under About in the menu.
+- **Governance > Accountability loop:** the stages of the loop, in order. The website draws them as a circle of
+  arrows that returns to the first stage. Leave it empty to hide the drawing.
+- **Home > Banner image:** a photo shown in indigo behind the headline. Use licensed photography only, and never
+  caption a stock photo as a VECTIS site, asset or person.
+- **A business's cluster** (on the website) comes from its **main sector** (Companies > the business > Sectors).
 
 **Sectors.** The industries used to group companies and projects.
 

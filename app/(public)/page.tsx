@@ -121,11 +121,9 @@ export default async function HomePage() {
       <section className="on-dark relative isolate flex min-h-[calc(100svh-7.25rem)] flex-col overflow-hidden bg-indigo text-ivory" aria-label="Introduction">
         {heroImage ? (
           <>
-            <PublicImage
-              img={{ ...heroImage, alt: "" }}
-              eager
-              className="absolute inset-0 -z-10 h-full w-full object-cover opacity-45 mix-blend-luminosity grayscale"
-            />
+            <div aria-hidden className="enter-settle absolute inset-0 -z-10 mix-blend-luminosity">
+              <PublicImage img={{ ...heroImage, alt: "" }} eager className="h-full w-full object-cover opacity-45 grayscale" />
+            </div>
             <div
               className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(13,17,90,0.95)_0%,rgba(13,17,90,0.8)_50%,rgba(13,17,90,0.45)_100%)]"
               aria-hidden
@@ -135,7 +133,7 @@ export default async function HomePage() {
           <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_85%_15%,rgba(40,91,89,0.35)_0%,transparent_55%)]" />
         )}
         <Container className="flex flex-1 flex-col justify-between gap-16 pt-16 pb-10 sm:pt-24 lg:pt-28 lg:pb-14">
-          <div className="max-w-5xl">
+          <div className="enter max-w-5xl">
             <p className="t-label flex items-center gap-3 text-ivory/85">
               <span aria-hidden className="h-px w-8 bg-copper" />
               {SINCE_LINE}
@@ -157,7 +155,7 @@ export default async function HomePage() {
               </div>
             ) : null}
           </div>
-          <ValueChain tone="dark" />
+          <ValueChain tone="dark" animate />
         </Container>
       </section>
 
@@ -382,7 +380,7 @@ function Featured({ label, list, all }: { label: string; list: Entry[]; all: { h
       <div className="grid gap-10 lg:grid-cols-12 lg:gap-6">
         <Link href={first.href} className={`group ${rest.length ? "lg:col-span-7" : "lg:col-span-12"}`}>
           {first.image ? (
-            <div className="mb-6 aspect-[16/9] overflow-hidden bg-steel/30">
+            <div className="reveal-image mb-6 aspect-[16/9] bg-steel/30">
               <PublicImage img={{ ...first.image, alt: "" }} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]" />
             </div>
           ) : null}

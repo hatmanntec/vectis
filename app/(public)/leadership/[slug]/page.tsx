@@ -4,9 +4,11 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { UserRound } from "lucide-react";
 import { getLeader, getSiteMap } from "@/features/public/data";
+import { PageSkeleton } from "@/features/public/components/bits";
 import { pageMetadata } from "@/features/public/metadata";
 import { RichText } from "@/features/public/components/rich-text";
 import { Container, MoreLink, PublicImage, Section } from "@/features/public/components/bits";
+import { Crumbs } from "@/features/public/components/editorial";
 import { CATEGORY_LABEL, type LeadershipCategory } from "@/features/leadership/labels";
 
 export async function generateMetadata({ params }: PageProps<"/leadership/[slug]">): Promise<Metadata> {
@@ -17,7 +19,7 @@ export async function generateMetadata({ params }: PageProps<"/leadership/[slug]
 
 export default function LeaderPage({ params }: PageProps<"/leadership/[slug]">) {
   return (
-    <Suspense fallback={<div className="h-96" />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Leader params={params} />
     </Suspense>
   );
@@ -28,35 +30,45 @@ async function Leader({ params }: { params: PageProps<"/leadership/[slug]">["par
   if (!p) notFound();
   return (
     <>
-      <header className="border-b border-border bg-white">
-        <Container className="grid items-end gap-10 py-14 sm:py-20 md:grid-cols-[18rem_minmax(0,1fr)]">
-          <div className="aspect-[4/5] w-full max-w-72 overflow-hidden border border-border bg-indigo/5">
-            {p.photo ? (
-              <PublicImage img={{ ...p.photo, alt: p.photo.alt || p.full_name }} eager className="h-full w-full object-cover object-top" />
-            ) : (
-              <div className="flex h-full items-center justify-center">
-                <UserRound className="size-20 text-steel" aria-hidden />
-              </div>
-            )}
+      <header className="border-b border-steel bg-ivory">
+        <div className="enter mx-auto w-full max-w-[79rem] px-5 pt-10 pb-14 sm:px-8 sm:pt-14 lg:pb-20">
+          <Crumbs
+            items={[
+              { label: "VECTIS", href: "/" },
+              { label: "Leadership", href: site.core.has("leadership") ? "/leadership" : undefined },
+              { label: p.full_name },
+            ]}
+          />
+          <div className="mt-10 grid items-end gap-10 md:grid-cols-12 md:gap-6 lg:mt-14">
+            <div className="aspect-[4/5] w-full max-w-72 overflow-hidden bg-steel/25 md:col-span-4 md:max-w-none lg:col-span-3">
+              {p.photo ? (
+                <PublicImage img={{ ...p.photo, alt: p.photo.alt || p.full_name }} eager className="h-full w-full object-cover object-top" />
+              ) : (
+                <div className="flex h-full items-center justify-center">
+                  <UserRound className="size-20 text-indigo/40" aria-hidden />
+                </div>
+              )}
+            </div>
+            <div className="md:col-span-8 lg:col-span-8 lg:col-start-5">
+              <p className="t-label text-teal">{CATEGORY_LABEL[p.category as LeadershipCategory]}</p>
+              <h1 className="t-h1 mt-4 text-indigo">{p.full_name}</h1>
+              {p.job_title ? <p className="t-lead mt-4 text-[var(--ink-muted)]">{p.job_title}</p> : null}
+            </div>
           </div>
-          <div>
-            <p className="mb-4 text-xs font-medium tracking-[0.2em] text-copper uppercase">{CATEGORY_LABEL[p.category as LeadershipCategory]}</p>
-            <h1 className="text-4xl leading-tight font-medium sm:text-5xl">{p.full_name}</h1>
-            {p.job_title ? <p className="mt-4 text-lg text-muted-foreground">{p.job_title}</p> : null}
-            <div className="mt-6 h-px w-16 bg-copper" aria-hidden />
-          </div>
-        </Container>
+        </div>
       </header>
-      <Container className="grid gap-12 py-14 sm:py-16 lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <div>{p.biography ? <RichText doc={p.biography} /> : null}</div>
+      <Container className="grid gap-12 py-14 lg:grid-cols-12 lg:gap-6 lg:py-20">
+        <div className="reveal lg:col-span-7">{p.biography ? <RichText doc={p.biography} className="t-body" /> : null}</div>
         {p.roles.length ? (
-          <aside>
-            <h2 className="mb-4 font-sans text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase">Roles</h2>
-            <ul className="divide-y divide-border border border-border bg-white text-sm">
+          <aside aria-labelledby="roles" className="reveal lg:col-span-4 lg:col-start-9">
+            <h2 id="roles" className="t-label mb-3 text-[var(--ink-muted)]">
+              Roles
+            </h2>
+            <ul className="border-t border-indigo">
               {p.roles.map((r) => (
-                <li key={r.company} className="px-5 py-3">
-                  <span className="font-medium text-indigo">{r.href ? <Link href={r.href} className="hover:underline">{r.company}</Link> : r.company}</span>
-                  {r.role ? <span className="block text-muted-foreground">{r.role}</span> : null}
+                <li key={r.company} className="border-b border-steel py-4">
+                  <span className="font-serif text-lg text-indigo">{r.href ? <Link href={r.href} className="underline-offset-4 hover:underline">{r.company}</Link> : r.company}</span>
+                  {r.role ? <span className="mt-0.5 block text-[0.9375rem] text-[var(--ink-muted)]">{r.role}</span> : null}
                 </li>
               ))}
             </ul>

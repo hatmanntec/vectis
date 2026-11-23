@@ -3,9 +3,11 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getNewsItem } from "@/features/public/data";
+import { PageSkeleton } from "@/features/public/components/bits";
 import { pageMetadata } from "@/features/public/metadata";
 import { RichText } from "@/features/public/components/rich-text";
 import { Container, Documents, Gallery, MoreLink, PublicImage, Section } from "@/features/public/components/bits";
+import { PageHero } from "@/features/public/components/editorial";
 import { NEWS_TYPE_LABEL, type NewsType } from "@/features/news/labels";
 import { formatDate } from "@/lib/cms/status";
 
@@ -17,7 +19,7 @@ export async function generateMetadata({ params }: PageProps<"/news/[slug]">): P
 
 export default function NewsItemPage({ params }: PageProps<"/news/[slug]">) {
   return (
-    <Suspense fallback={<div className="h-96" />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Article params={params} />
     </Suspense>
   );
@@ -28,39 +30,35 @@ async function Article({ params }: { params: PageProps<"/news/[slug]">["params"]
   if (!n) notFound();
   return (
     <article>
-      <header className="border-b border-border bg-white">
-        <Container className="max-w-4xl py-14 sm:py-20">
-          <p className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-medium tracking-[0.2em] text-copper uppercase">
-            <span>{NEWS_TYPE_LABEL[n.news_type as NewsType]}</span>
-            {n.published_at ? (
-              <time dateTime={n.published_at} className="tracking-normal text-muted-foreground normal-case">
-                {formatDate(n.published_at)}
-              </time>
-            ) : null}
-          </p>
-          <h1 className="text-3xl leading-tight font-medium sm:text-5xl">{n.title}</h1>
-          {n.excerpt ? <p className="mt-6 text-lg leading-relaxed text-muted-foreground">{n.excerpt}</p> : null}
-          {n.author_name ? <p className="mt-6 text-sm text-muted-foreground">By {n.author_name}</p> : null}
-        </Container>
-      </header>
+      <PageHero crumbs={[{ label: "VECTIS", href: "/" }, { label: "News", href: "/news" }, { label: n.title }]} title={n.title} lead={n.excerpt}>
+        <p className="t-label mt-10 flex flex-wrap items-center gap-x-4 gap-y-1 text-[var(--ink-muted)] lg:mt-14">
+          <span className="text-teal">{NEWS_TYPE_LABEL[n.news_type as NewsType]}</span>
+          {n.published_at ? <time dateTime={n.published_at}>{formatDate(n.published_at)}</time> : null}
+          {n.author_name ? <span>{`By ${n.author_name}`}</span> : null}
+        </p>
+      </PageHero>
       {n.cover ? (
-        <Container className="max-w-4xl">
-          <PublicImage img={n.cover} eager className="aspect-[16/9] w-full border border-t-0 border-border object-cover" />
+        <Container className="pt-10">
+          <div className="reveal-image mx-auto max-w-[58rem]">
+            <PublicImage img={n.cover} eager className="aspect-[16/9] w-full object-cover" />
+          </div>
         </Container>
       ) : null}
-      <Container className="max-w-4xl py-12 sm:py-16">
-        {n.body ? <RichText doc={n.body} /> : null}
-        {n.companies.length ? (
-          <div className="mt-12 border-t border-border pt-6 text-sm">
-            <span className="text-muted-foreground">Companies mentioned: </span>
-            {n.companies.map((c, i) => (
-              <span key={c.name}>
-                {i ? ", " : ""}
-                {c.href ? <Link href={c.href} className="text-indigo underline">{c.name}</Link> : c.name}
-              </span>
-            ))}
-          </div>
-        ) : null}
+      <Container className="py-14 lg:py-20">
+        <div className="reveal mx-auto max-w-[42rem]">
+          {n.body ? <RichText doc={n.body} className="t-body" /> : null}
+          {n.companies.length ? (
+            <div className="mt-12 border-t border-steel pt-6 text-[0.9375rem]">
+              <span className="t-label mr-2 text-[var(--ink-muted)]">Companies mentioned</span>
+              {n.companies.map((c, i) => (
+                <span key={c.name}>
+                  {i ? ", " : ""}
+                  {c.href ? <Link href={c.href} className="text-indigo underline underline-offset-4">{c.name}</Link> : c.name}
+                </span>
+              ))}
+            </div>
+          ) : null}
+        </div>
       </Container>
       {n.gallery.length ? (
         <Section title="Gallery" tone="white">

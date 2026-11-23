@@ -1,6 +1,7 @@
 import type { PageData } from "../data";
 import { RichText } from "./rich-text";
 import { Container, PageHeading, PublicImage } from "./bits";
+import type { Crumb } from "./editorial";
 
 /** Reads a text field from a page's content. */
 export const text = (page: PageData, key: string) => (typeof page.content[key] === "string" ? (page.content[key] as string) : null);
@@ -9,21 +10,28 @@ export type Item = { heading: string; text: string };
 export const items = (page: PageData, key: string): Item[] =>
   Array.isArray(page.content[key]) ? (page.content[key] as Item[]).filter((i) => i && (i.heading || i.text)) : [];
 
-/** Heading, introduction, page image and main text: the shape most pages share. */
-export function StandardPage({ page, eyebrow, children }: { page: PageData; eyebrow?: string; children?: React.ReactNode }) {
+/**
+ * Heading band, page image and main text: the shape most pages share. The
+ * main text sits in a comfortable reading column, offset on wide screens.
+ */
+export function StandardPage({ page, crumbs, children }: { page: PageData; eyebrow?: string; crumbs?: Crumb[]; children?: React.ReactNode }) {
   const image = page.images.image;
   const body = page.content.body;
   return (
     <>
-      <PageHeading eyebrow={eyebrow} title={page.title} intro={text(page, "intro")} />
+      <PageHeading title={page.title} intro={text(page, "intro")} crumbs={crumbs} />
       {image ? (
-        <Container className="-mt-px">
-          <PublicImage img={image} eager className="aspect-[21/9] w-full border border-t-0 border-border object-cover" />
+        <Container className="pt-10">
+          <div className="reveal-image">
+            <PublicImage img={image} eager className="aspect-[21/9] w-full object-cover" />
+          </div>
         </Container>
       ) : null}
       {body ? (
-        <Container className="py-14 sm:py-16">
-          <RichText doc={body} className="max-w-3xl" />
+        <Container className="py-14 lg:py-20">
+          <div className="reveal max-w-[42rem] lg:ml-[calc(5/12*100%)]">
+            <RichText doc={body} className="t-body" />
+          </div>
         </Container>
       ) : null}
       {children}
@@ -31,33 +39,36 @@ export function StandardPage({ page, eyebrow, children }: { page: PageData; eyeb
   );
 }
 
-/** Cards for a list of { heading, text } entries (values, principles, highlights). */
-export function ItemGrid({ list, numbered = false }: { list: Item[]; numbered?: boolean }) {
+/** Numbered entries ({ heading, text }) on hairlines: values, principles, highlights. */
+export function ItemGrid({ list, numbered = true }: { list: Item[]; numbered?: boolean }) {
   if (!list.length) return null;
   return (
-    <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <ol className="grid border-t border-indigo sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-3">
       {list.map((i, n) => (
-        <li key={`${i.heading}-${n}`} className="border border-border bg-white p-7">
-          {numbered ? <p className="mb-4 font-serif text-sm text-copper">{String(n + 1).padStart(2, "0")}</p> : <div className="mb-5 h-px w-10 bg-copper" aria-hidden />}
-          {i.heading ? <h3 className="text-xl font-medium">{i.heading}</h3> : null}
-          {i.text ? <p className="mt-3 text-sm leading-relaxed whitespace-pre-line text-muted-foreground">{i.text}</p> : null}
+        <li key={`${i.heading}-${n}`} className="reveal border-b border-steel py-8">
+          {numbered ? <p className="t-label t-index">{String(n + 1).padStart(2, "0")}</p> : null}
+          {i.heading ? <h3 className="t-h3 mt-3 text-indigo">{i.heading}</h3> : null}
+          {i.text ? <p className="mt-3 text-[0.9375rem] leading-relaxed whitespace-pre-line text-[var(--ink-muted)]">{i.text}</p> : null}
         </li>
       ))}
-    </ul>
+    </ol>
   );
 }
 
-/** A vertical timeline of { heading (date), text } entries. */
+/** A vertical timeline: the date large on the left, the event on the right, joined by a copper line. */
 export function Timeline({ list }: { list: { date: string; title?: string | null; text?: string | null }[] }) {
   if (!list.length) return null;
   return (
-    <ol className="relative max-w-3xl border-l-2 border-copper/40 pl-8">
+    <ol className="relative">
+      <span aria-hidden className="absolute top-2 bottom-2 left-[5px] w-px bg-copper md:left-[calc(25%+5px)]" />
       {list.map((e, n) => (
-        <li key={n} className="relative pb-10 last:pb-0">
-          <span className="absolute top-1.5 -left-[41px] size-4 border-2 border-copper bg-ivory" aria-hidden />
-          {e.date ? <p className="font-serif text-lg text-copper">{e.date}</p> : null}
-          {e.title ? <h3 className="mt-1 text-xl font-medium">{e.title}</h3> : null}
-          {e.text ? <p className="mt-2 leading-relaxed whitespace-pre-line text-muted-foreground">{e.text}</p> : null}
+        <li key={n} className="reveal relative grid gap-2 pb-12 pl-8 last:pb-0 md:grid-cols-4 md:gap-6 md:pl-0">
+          <span aria-hidden className="absolute top-2 left-0 size-[11px] border border-copper bg-ivory md:left-[25%]" />
+          <p className={`font-serif leading-none text-indigo md:pr-10 md:text-right ${e.date.length > 6 ? "text-xl md:text-2xl" : "text-3xl md:text-5xl"}`}>{e.date}</p>
+          <div className="md:col-span-3 md:pl-12">
+            {e.title ? <h3 className="t-h3 text-indigo">{e.title}</h3> : null}
+            {e.text ? <p className="t-body mt-2 whitespace-pre-line text-[var(--ink-muted)]">{e.text}</p> : null}
+          </div>
         </li>
       ))}
     </ol>

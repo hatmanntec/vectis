@@ -24,12 +24,12 @@ function Field({
   maxLength: number;
 }) {
   const id = useId();
-  const cls = `w-full border bg-white px-4 py-3 text-base outline-none focus-visible:border-indigo focus-visible:ring-2 focus-visible:ring-indigo/20 ${error ? "border-destructive" : "border-input"}`;
+  const cls = `min-h-12 w-full border bg-white px-4 py-3 text-base transition-colors duration-200 hover:border-indigo focus-visible:border-indigo ${error ? "border-destructive" : "border-steel"}`;
   return (
     <div className={textarea ? "sm:col-span-2" : ""}>
-      <label htmlFor={id} className="mb-2 block text-sm font-medium text-graphite">
+      <label htmlFor={id} className="t-label mb-2 block text-graphite">
         {label}
-        {required ? <span className="text-copper"> *</span> : <span className="font-normal text-muted-foreground"> (optional)</span>}
+        {required ? <span className="text-indigo"> *</span> : <span className="text-[var(--ink-muted)] normal-case tracking-normal"> (optional)</span>}
       </label>
       {textarea ? (
         <textarea id={id} name={name} rows={6} required={required} maxLength={maxLength} aria-invalid={Boolean(error)} aria-describedby={error ? `${id}-e` : undefined} className={cls} />
@@ -59,7 +59,7 @@ export function ContactForm({ successMessage }: { successMessage: string | null 
   }
   const e = state?.errors ?? {};
   return (
-    <form action={action} className="grid gap-6 border border-border bg-white p-6 sm:grid-cols-2 sm:p-10" noValidate>
+    <form action={action} className="grid gap-6 border-t border-indigo pt-8 sm:grid-cols-2" noValidate>
       {state && !state.ok && state.message ? (
         <p role="alert" className="border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive sm:col-span-2">
           {state.message}
@@ -81,8 +81,8 @@ export function ContactForm({ successMessage }: { successMessage: string | null 
         </label>
       </div>
       <div className="flex flex-col gap-4 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-muted-foreground">Your details are used only to reply to your message.</p>
-        <button type="submit" disabled={pending} className="inline-flex h-12 items-center justify-center bg-indigo px-8 text-sm font-medium text-white hover:bg-[#1b2070] disabled:opacity-70">
+        <p className="text-sm text-[var(--ink-muted)]">Your details are used only to reply to your message.</p>
+        <button type="submit" disabled={pending} className="inline-flex min-h-12 items-center justify-center bg-indigo px-8 text-[0.9375rem] font-medium text-white transition-colors duration-200 hover:bg-[#1b2070] disabled:opacity-70">
           {pending ? "Sending…" : "Send message"}
         </button>
       </div>

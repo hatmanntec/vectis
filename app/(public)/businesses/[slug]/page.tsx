@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getBusiness, listBusinesses } from "@/features/public/data";
+import { PageSkeleton } from "@/features/public/components/bits";
 import { clusterOf, type Cluster } from "@/features/public/clusters";
 import { pageMetadata } from "@/features/public/metadata";
 import { RichText } from "@/features/public/components/rich-text";
@@ -21,7 +22,7 @@ export async function generateMetadata({ params }: PageProps<"/businesses/[slug]
 
 export default function BusinessPage({ params }: PageProps<"/businesses/[slug]">) {
   return (
-    <Suspense fallback={<div className="h-96" />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Business params={params} />
     </Suspense>
   );
@@ -64,12 +65,14 @@ async function Business({ params }: { params: PageProps<"/businesses/[slug]">["p
       </PageHero>
       {c.cover ? (
         <Container className="pt-10">
-          <PublicImage img={c.cover} eager className="aspect-[21/9] w-full object-cover" />
+          <div className="reveal-image">
+            <PublicImage img={c.cover} eager className="aspect-[21/9] w-full object-cover" />
+          </div>
         </Container>
       ) : null}
 
       <Container className="grid gap-12 py-14 lg:grid-cols-12 lg:gap-6 lg:py-20">
-        <div className="lg:col-span-7">
+        <div className="reveal lg:col-span-7">
           {c.parent ? <p className="t-label mb-6 text-[var(--ink-muted)]">{`Part of ${c.parent.name}`}</p> : null}
           {c.description ? <RichText doc={c.description} className="t-body" /> : c.shortDescription ? null : <p className="t-body text-[var(--ink-muted)]">A fuller profile will appear here soon.</p>}
         </div>
@@ -175,7 +178,7 @@ async function Business({ params }: { params: PageProps<"/businesses/[slug]">["p
         <Block label="Work" title="Projects">
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {c.projects.map((p) => (
-              <li key={p.id}>
+              <li key={p.id} className="reveal">
                 <ProjectCard p={p} />
               </li>
             ))}
@@ -187,7 +190,7 @@ async function Business({ params }: { params: PageProps<"/businesses/[slug]">["p
         <Block label="People" title="Leadership" tone="ivory">
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {c.people.map((p) => (
-              <li key={p.id}>
+              <li key={p.id} className="reveal">
                 <PersonCard p={p} />
               </li>
             ))}
@@ -211,7 +214,7 @@ async function Business({ params }: { params: PageProps<"/businesses/[slug]">["p
         <Block label="Latest" title="News">
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {c.news.map((n) => (
-              <li key={n.id}>
+              <li key={n.id} className="reveal">
                 <NewsCard n={{ ...n, excerpt: null, cover: null }} />
               </li>
             ))}

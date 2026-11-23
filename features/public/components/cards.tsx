@@ -7,7 +7,10 @@ import { NEWS_TYPE_LABEL, type NewsType } from "@/features/news/labels";
 import type { CompanyCard as CompanyCardData, Img } from "../data";
 import { PublicImage, Tag } from "./bits";
 
-const card = "group flex h-full flex-col border border-border bg-white transition-shadow hover:shadow-[0_8px_30px_-12px_rgba(13,17,90,0.25)]";
+/** Cards: square, on a hairline, with a copper rule that draws in on hover or focus. */
+const card = "group relative flex h-full flex-col border-t border-indigo bg-transparent pt-5 pb-6";
+const rule = "pointer-events-none absolute -top-px left-0 h-0.5 w-0 bg-copper transition-[width] duration-500 group-hover:w-full group-focus-visible:w-full";
+const title = "font-serif text-[1.375rem] leading-snug text-indigo group-hover:underline group-hover:underline-offset-4";
 
 export function CompanyCard({ c }: { c: CompanyCardData }) {
   return (
@@ -69,27 +72,24 @@ export function ProjectCard({
   const place = [p.location_name, p.state].filter(Boolean).join(", ");
   return (
     <Link href={`/projects/${p.slug}`} className={card}>
-      <div className="aspect-[16/9] overflow-hidden border-b border-border bg-indigo/5">
+      <span aria-hidden className={rule} />
+      <div className="reveal-image mb-5 aspect-[16/9] bg-indigo">
         {p.cover ? (
-          <PublicImage img={p.cover} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+          <PublicImage img={p.cover} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
         ) : (
-          <div className="h-full w-full bg-[linear-gradient(135deg,var(--vectis-indigo),#1b2070)]" aria-hidden />
+          <div className="h-full w-full bg-[radial-gradient(ellipse_at_80%_20%,rgba(40,91,89,0.45)_0%,transparent_60%)]" aria-hidden />
         )}
       </div>
-      <div className="flex flex-1 flex-col p-6">
-        <div className="mb-3 flex flex-wrap gap-2">
-          <Tag>{PROJECT_STATUS_LABEL[p.project_status as ProjectStatus]}</Tag>
-        </div>
-        <h3 className="text-xl font-medium group-hover:underline">{p.title}</h3>
-        {p.company ? <p className="mt-1 text-sm text-muted-foreground">{p.company}</p> : null}
-        {p.summary ? <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{p.summary}</p> : null}
-        {place ? (
-          <p className="mt-auto flex items-center gap-1.5 pt-4 text-sm text-muted-foreground">
-            <MapPin className="size-4 text-copper" aria-hidden />
-            {place}
-          </p>
-        ) : null}
-      </div>
+      <p className="t-label text-teal">{PROJECT_STATUS_LABEL[p.project_status as ProjectStatus]}</p>
+      <h3 className={`mt-2 ${title}`}>{p.title}</h3>
+      {p.company ? <p className="t-label mt-2 text-[var(--ink-muted)]">{p.company}</p> : null}
+      {p.summary ? <p className="mt-3 text-[0.9375rem] leading-relaxed text-[var(--ink-muted)]">{p.summary}</p> : null}
+      {place ? (
+        <p className="mt-auto flex items-center gap-1.5 pt-4 text-sm text-[var(--ink-muted)]">
+          <MapPin className="size-4 text-copper" aria-hidden />
+          {place}
+        </p>
+      ) : null}
     </Link>
   );
 }
@@ -101,24 +101,23 @@ export function NewsCard({
 }) {
   return (
     <Link href={`/news/${n.slug}`} className={card}>
+      <span aria-hidden className={rule} />
       {n.cover ? (
-        <div className="aspect-[16/9] overflow-hidden border-b border-border">
-          <PublicImage img={n.cover} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+        <div className="reveal-image mb-5 aspect-[16/9] bg-steel/20">
+          <PublicImage img={n.cover} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
         </div>
       ) : null}
-      <div className="flex flex-1 flex-col p-6">
-        <p className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium tracking-[0.14em] text-copper uppercase">
-          <span>{NEWS_TYPE_LABEL[n.news_type as NewsType]}</span>
-          {n.published_at ? (
-            <span className="flex items-center gap-1 tracking-normal text-muted-foreground normal-case">
-              <CalendarDays className="size-3.5" aria-hidden />
-              <time dateTime={n.published_at}>{formatDate(n.published_at)}</time>
-            </span>
-          ) : null}
-        </p>
-        <h3 className="text-xl leading-snug font-medium group-hover:underline">{n.title}</h3>
-        {n.excerpt ? <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{n.excerpt}</p> : null}
-      </div>
+      <p className="t-label flex flex-wrap items-center gap-x-3 gap-y-1 text-[var(--ink-muted)]">
+        <span className="text-teal">{NEWS_TYPE_LABEL[n.news_type as NewsType]}</span>
+        {n.published_at ? (
+          <span className="flex items-center gap-1">
+            <CalendarDays className="size-3.5" aria-hidden />
+            <time dateTime={n.published_at}>{formatDate(n.published_at)}</time>
+          </span>
+        ) : null}
+      </p>
+      <h3 className={`mt-3 ${title}`}>{n.title}</h3>
+      {n.excerpt ? <p className="mt-3 text-[0.9375rem] leading-relaxed text-[var(--ink-muted)]">{n.excerpt}</p> : null}
     </Link>
   );
 }
@@ -126,19 +125,18 @@ export function NewsCard({
 export function PersonCard({ p }: { p: { slug: string; full_name: string; job_title: string | null; photo: Img; role?: string | null } }) {
   return (
     <Link href={`/leadership/${p.slug}`} className={card}>
-      <div className="aspect-[4/5] overflow-hidden border-b border-border bg-indigo/5">
+      <span aria-hidden className={rule} />
+      <div className="reveal-image mb-5 aspect-[4/5] bg-steel/25">
         {p.photo ? (
-          <PublicImage img={{ ...p.photo, alt: p.photo.alt || p.full_name }} className="h-full w-full object-cover object-top" />
+          <PublicImage img={{ ...p.photo, alt: p.photo.alt || p.full_name }} className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]" />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <UserRound className="size-16 text-steel" aria-hidden />
+            <UserRound className="size-16 text-indigo/40" aria-hidden />
           </div>
         )}
       </div>
-      <div className="p-5">
-        <h3 className="text-lg leading-snug font-medium group-hover:underline">{p.full_name}</h3>
-        {p.role ?? p.job_title ? <p className="mt-1 text-sm text-muted-foreground">{p.role ?? p.job_title}</p> : null}
-      </div>
+      <h3 className={title}>{p.full_name}</h3>
+      {p.role ?? p.job_title ? <p className="t-label mt-2 text-[var(--ink-muted)]">{p.role ?? p.job_title}</p> : null}
     </Link>
   );
 }

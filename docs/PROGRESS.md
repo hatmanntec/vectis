@@ -25,8 +25,34 @@ The running record of what has been built. Newest milestone first.
 | Redesign, Stage 2: Home page | **Done** (23 Nov 2026), no database update |
 | Redesign, Stage 3: Businesses | **Done** (23 Nov 2026), no database update |
 | Redesign, Stage 4: Investments and Industries | **Done** (23 Nov 2026), no database update |
-| Redesign, Stages 5–6 | To do: inner pages, quality pass |
+| Redesign, Stage 5: Inner pages | **Done** (23 Nov 2026), database update 0020 (governance loop) |
+| Redesign, Stage 6: Quality pass | **Done** (23 Nov 2026) |
+| Scroll-reveal motion system | **Done** (23 Nov 2026) |
 | Still to enter in the CMS | Leadership, projects, news, contact details, licensed stock photos |
+
+## Redesign Stages 5 and 6, and the motion system (23 Nov 2026)
+
+**Stage 5, inner pages.** About (values as a numbered list, links to the rest of About), Corporate History (a
+vertical timeline with large dates), Governance (with the accountability loop drawn as a circle of arrows), the
+Foundation and other extra pages, Contact (details beside the form; same fields and behaviour), News and articles,
+Projects and project pages, Leadership and profiles, and the not-found page. All use the new page band with a
+breadcrumb; cards for projects, news and people are restyled (hairline, Fraunces title, copper rule on hover).
+
+**One CMS addition and one database update:** the Governance page gains an "Accountability loop" list (stages in
+order). `0020_governance_loop.sql` fills it with the four stages from the profile (Board and Executive, Investment
+and Risk, Finance and Treasury, Compliance and Audit), only if the list is empty. Safe to run again.
+
+**Motion system** (see ARCHITECTURE.md): text rises and fades, pictures open with a soft mask, cards and rows unfold
+in sequence, section rules draw in, and the home hero and every page band have an entrance on load. Once per item,
+off under reduced motion, and invisible to search engines and visitors without JavaScript.
+
+**Stage 6, quality pass** (real content, production build):
+- 15 routes at 375, 768, 1024 and 1440 px: no sideways scrolling, no browser errors, axe (WCAG 2.1 AA) clean after
+  animations settle, layout shift under 0.1 everywhere, visible focus on every element reached by Tab.
+- Lighthouse (mobile): Home 99/100/100/100 (performance, accessibility, best practices, SEO), Businesses 100s,
+  Investments 100s, About 98/100/100/100, a business profile 92/100/100/92 (see Remaining issues in the report).
+- Suites: public site 96 checks (6 new for motion), CMS suites, both accessibility scans, database rules 60,
+  0017 9, 0018 12; 0020 tested fresh, repeated and with an edited list.
 
 ## Redesign Stage 4: Investments and Industries (23 Nov 2026)
 

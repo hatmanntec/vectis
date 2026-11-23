@@ -14,8 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function NewsPage({ searchParams }: PageProps<"/news">) {
   return (
     <>
-      <PageHeading eyebrow="News & media" title="News" />
-      <Suspense fallback={<Container className="py-16"><div className="h-64 animate-pulse bg-white" /></Container>}>
+      <PageHeading title="News" intro="News and announcements from VECTIS." />
+      <Suspense fallback={<Container className="py-16"><div className="h-64 animate-pulse bg-white/60" /></Container>}>
         <NewsList searchParams={searchParams} />
       </Suspense>
     </>
@@ -36,24 +36,24 @@ async function NewsList({ searchParams }: { searchParams: PageProps<"/news">["se
     return s ? `/news?${s}` : "/news";
   };
   return (
-    <Container className="py-12 sm:py-16">
-      <nav aria-label="Filter news" className="mb-8 flex flex-wrap gap-2">
+    <Container className="py-14 lg:py-20">
+      <nav aria-label="Filter news" className="mb-14 flex flex-wrap gap-2 border-y border-steel py-6">
         {[{ value: null as string | null, label: "All" }, ...NEWS_TYPES.map((t) => ({ value: t as string | null, label: NEWS_TYPE_LABEL[t] }))].map((t) => (
           <Link
             key={t.value ?? "all"}
             href={href(1, t.value)}
             aria-current={t.value === type ? "page" : undefined}
             scroll={false}
-            className={`border px-4 py-2 text-sm ${t.value === type ? "border-indigo bg-indigo text-white" : "border-border bg-white text-graphite hover:border-indigo"}`}
+            className={`inline-flex min-h-10 items-center border px-3.5 text-sm transition-colors duration-200 ${t.value === type ? "border-indigo bg-indigo text-white" : "border-steel bg-white text-graphite hover:border-indigo hover:text-indigo"}`}
           >
             {t.label}
           </Link>
         ))}
       </nav>
       {items.length ? (
-        <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((n) => (
-            <li key={n.id}>
+            <li key={n.id} className="reveal">
               <NewsCard n={n} />
             </li>
           ))}
@@ -62,12 +62,12 @@ async function NewsList({ searchParams }: { searchParams: PageProps<"/news">["se
         <Nothing>No news here yet.</Nothing>
       )}
       {pages > 1 ? (
-        <nav aria-label="Pages" className="mt-10 flex items-center justify-between text-sm">
-          {pageNum > 1 ? <Link href={href(pageNum - 1, type)} className="border border-border bg-white px-4 py-2 hover:border-indigo">Newer</Link> : <span />}
-          <span className="text-muted-foreground">
+        <nav aria-label="Pages" className="mt-14 flex items-center justify-between border-t border-steel pt-6 text-sm">
+          {pageNum > 1 ? <Link href={href(pageNum - 1, type)} className="inline-flex min-h-11 items-center border border-steel bg-white px-4 hover:border-indigo">Newer</Link> : <span />}
+          <span className="t-label text-[var(--ink-muted)]">
             Page {pageNum} of {pages}
           </span>
-          {pageNum < pages ? <Link href={href(pageNum + 1, type)} className="border border-border bg-white px-4 py-2 hover:border-indigo">Older</Link> : <span />}
+          {pageNum < pages ? <Link href={href(pageNum + 1, type)} className="inline-flex min-h-11 items-center border border-steel bg-white px-4 hover:border-indigo">Older</Link> : <span />}
         </nav>
       ) : null}
     </Container>

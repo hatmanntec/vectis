@@ -182,14 +182,63 @@
   .link-arrow svg { transition: transform 200ms ease-out; }
   .link-arrow:hover svg { transform: translateX(4px); }
 
-  /* Scroll reveal: content fades up 12 px over 350 ms as it enters view.
-     Hidden only once JavaScript has started (html.reveal-ready), so content
-     is always visible without it; nothing moves under reduced motion. */
-  html.reveal-ready .reveal:not([data-revealed]) { opacity: 0; transform: translateY(12px); }
-  html.reveal-ready .reveal { transition: opacity 350ms ease-out, transform 350ms ease-out; }
+  /* ===================================================================
+   * Motion: scroll reveals and page entrances.
+   * Understated by design: short rises, no bounce, no spin, each block
+   * animates once. Content is hidden only after JavaScript has started
+   * (html.reveal-ready), so it is always present for search engines and
+   * for visitors without JavaScript. Everything is switched off under
+   * "reduce motion".
+   * =================================================================== */
+  .site {
+    --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --reveal-time: 700ms;
+  }
+
+  /* Text and blocks: fade in while rising 20 px. */
+  html.reveal-ready .reveal:not([data-revealed]) { opacity: 0; transform: translateY(20px); }
+  /* Transitions apply only on the way in, so hiding never animates. */
+  html.reveal-ready .reveal[data-revealed] {
+    transition: opacity var(--reveal-time) var(--ease-out), transform var(--reveal-time) var(--ease-out);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  /* Images: a soft mask that opens upwards, with the picture settling from 104%. */
+  html.reveal-ready .reveal-image:not([data-revealed]) { opacity: 0; clip-path: inset(10% 0 0 0); }
+  html.reveal-ready .reveal-image:not([data-revealed]) img { transform: scale(1.04); }
+  html.reveal-ready .reveal-image[data-revealed] {
+    transition: opacity 800ms var(--ease-out), clip-path 800ms var(--ease-out);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  html.reveal-ready .reveal-image[data-revealed] img { transition: transform 800ms var(--ease-out); transition-delay: var(--reveal-delay, 0ms); }
+  .reveal-image { overflow: hidden; }
+
+  /* Rules that draw from the left once their block is revealed (section labels, list tops). */
+  html.reveal-ready .reveal:not([data-revealed]) .draw-x { transform: scaleX(0); }
+  .draw-x { transform-origin: left center; }
+  html.reveal-ready .reveal[data-revealed] .draw-x { transition: transform 800ms var(--ease-out); transition-delay: calc(var(--reveal-delay, 0ms) + 150ms); }
+
+  /* Page entrances, played once on load (no JavaScript needed). */
+  @keyframes vectis-rise { from { opacity: 0.01; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+  @keyframes vectis-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes vectis-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes vectis-settle { from { opacity: 0; transform: scale(1.06); } to { opacity: var(--settle-opacity, 1); transform: none; } }
+  .enter > * { animation: vectis-rise 800ms var(--ease-out) both; }
+  .enter > *:nth-child(2) { animation-delay: 120ms; }
+  .enter > *:nth-child(3) { animation-delay: 240ms; }
+  .enter > *:nth-child(4) { animation-delay: 360ms; }
+  .enter > *:nth-child(n + 5) { animation-delay: 480ms; }
+  .enter-late { animation: vectis-fade 800ms var(--ease-out) 600ms both; }
+  .enter-draw { transform-origin: left center; animation: vectis-draw 1100ms var(--ease-out) 650ms both; }
+  .enter-settle { animation: vectis-settle 1400ms var(--ease-out) both; }
+  .enter-step { animation: vectis-rise 700ms var(--ease-out) both; animation-delay: calc(700ms + var(--step, 0) * 110ms); }
+
   @media (prefers-reduced-motion: reduce) {
-    html.reveal-ready .reveal:not([data-revealed]) { opacity: 1; transform: none; }
-    html.reveal-ready .reveal { transition: none; }
-    .site *, .site *::before, .site *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    html.reveal-ready .reveal:not([data-revealed]),
+    html.reveal-ready .reveal-image:not([data-revealed]) { opacity: 1; transform: none; clip-path: none; }
+    html.reveal-ready .reveal-image:not([data-revealed]) img,
+    html.reveal-ready .reveal:not([data-revealed]) .draw-x { transform: none; }
+    .enter > *, .enter-late, .enter-draw, .enter-settle, .enter-step { animation: none; }
+    .site *, .site *::before, .site *::after { transition-duration: 0.01ms !important; transition-delay: 0ms !important; animation-duration: 0.01ms !important; scroll-behavior: auto !important; }
   }
 }

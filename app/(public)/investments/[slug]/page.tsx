@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getInvestment } from "@/features/public/data";
+import { PageSkeleton } from "@/features/public/components/bits";
 import { pageMetadata } from "@/features/public/metadata";
 import { RichText } from "@/features/public/components/rich-text";
 import { Container, Documents, Facts, Gallery, PublicImage } from "@/features/public/components/bits";
@@ -18,7 +19,7 @@ export async function generateMetadata({ params }: PageProps<"/investments/[slug
 
 export default function InvestmentPage({ params }: PageProps<"/investments/[slug]">) {
   return (
-    <Suspense fallback={<div className="h-96" />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Investment params={params} />
     </Suspense>
   );
@@ -52,7 +53,7 @@ async function Investment({ params }: { params: PageProps<"/investments/[slug]">
 
       <Container className="grid gap-12 py-14 lg:grid-cols-12 lg:gap-6 lg:py-20">
         {i.description ? (
-          <div className="lg:col-span-7">
+          <div className="reveal lg:col-span-7">
             <RichText doc={i.description} className="t-body" />
           </div>
         ) : null}

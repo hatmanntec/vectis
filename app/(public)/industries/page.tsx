@@ -56,7 +56,11 @@ export default async function IndustriesPage() {
                 <div className="mt-3 lg:col-span-6 lg:mt-0">
                   <h2 className="t-h3 text-indigo lg:text-[2rem]">{s.name}</h2>
                   {s.description ? <p className="t-body mt-4 whitespace-pre-line text-[var(--ink-muted)]">{s.description}</p> : null}
-                  {s.cover ? <PublicImage img={s.cover} className="mt-8 aspect-[16/9] w-full object-cover" /> : null}
+                  {s.cover ? (
+                    <div className="reveal-image mt-8">
+                      <PublicImage img={s.cover} className="aspect-[16/9] w-full object-cover" />
+                    </div>
+                  ) : null}
                 </div>
                 <div className="mt-8 lg:col-span-4 lg:col-start-9 lg:mt-0 lg:pt-2">
                   <p className="t-label text-[var(--ink-muted)]">

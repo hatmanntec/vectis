@@ -24,12 +24,16 @@ export default async function BusinessesPage({ searchParams }: PageProps<"/busin
       <PageHero crumbs={[{ label: "VECTIS", href: "/" }, { label: page.title }]} title={page.title} lead={text(page, "intro")} />
       {page.images.image ? (
         <Container className="pt-10">
-          <PublicImage img={page.images.image} eager className="aspect-[21/9] w-full object-cover" />
+          <div className="reveal-image">
+            <PublicImage img={page.images.image} eager className="aspect-[21/9] w-full object-cover" />
+          </div>
         </Container>
       ) : null}
       {body ? (
         <Container className="pt-14 lg:pt-20">
-          <RichText doc={body} className="t-body max-w-[42rem] lg:ml-[calc(5/12*100%)]" />
+          <div className="reveal max-w-[42rem] lg:ml-[calc(5/12*100%)]">
+            <RichText doc={body} className="t-body" />
+          </div>
         </Container>
       ) : null}
       <Suspense

@@ -36,3 +36,21 @@ Archive hides a record everywhere, Restore returns it as a Draft, and Delete is 
 
 Password-only (client decision, 22 Nov 2026). `is_admin()` = signed in + active row in `admin_profiles`.
 Public sign-up is disabled in Supabase; administrators are added only through the SQL Editor.
+
+## Public site design and motion
+
+- **Design system:** `app/globals.css` (under `.site`) and `features/public/components/editorial.tsx`: Fraunces,
+  IBM Plex Sans and IBM Plex Mono; the type scale (`t-hero` … `t-label`); square corners; hairlines; the page band
+  (`PageHero`), breadcrumb (`Crumbs`), section header (`SectionHead`) and block (`Block`). The CMS doesn't use `.site`.
+- **Clusters:** `features/public/clusters.ts` maps sectors to the profile's five clusters; a business follows its
+  main sector.
+- **Motion** is CSS plus one small client component (`reveal.tsx`, an IntersectionObserver), not a motion library:
+  - `reveal` (text and blocks: fade and rise 20 px, 700 ms), `reveal-image` (pictures: a mask opening upwards and a
+    104% → 100% settle, 800 ms), `draw-x` (rules that draw from the left after their block).
+  - Items entering together are staggered in reading order, 90 ms apart, capped at 450 ms. Each item animates once.
+  - Page entrances (`enter`, `enter-draw`, `enter-step`, `enter-settle`) are CSS keyframes that play on load.
+  - Content is hidden only after JavaScript starts (`html.reveal-ready`) and anything already on screen is shown at
+    once, so the server HTML is complete for search engines and nothing goes missing without JavaScript.
+  - `prefers-reduced-motion: reduce` switches every reveal and entrance off.
+  - Why not Motion for React: the public pages are server components; Motion would turn many of them into client
+    components, add a library to every page, and write hidden starting styles into the server HTML.

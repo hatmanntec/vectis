@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getCorePage } from "@/features/public/data";
+import { getCorePage, getSiteMap } from "@/features/public/data";
+import { aboutCrumbs } from "@/features/public/components/editorial";
 import { pageMetadata } from "@/features/public/metadata";
 import { StandardPage, Timeline, items } from "@/features/public/components/page-blocks";
 import { Section } from "@/features/public/components/bits";
@@ -11,11 +12,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HistoryPage() {
-  const page = await getCorePage("history");
+  const [page, site] = await Promise.all([getCorePage("history"), getSiteMap()]);
   if (!page) notFound();
   const dates = items(page, "timeline");
   return (
-    <StandardPage page={page} eyebrow="Since 1956">
+    <StandardPage page={page} crumbs={aboutCrumbs(site.core.has("about"), page.title)}>
       {dates.length ? (
         <Section title="Key dates" tone="white">
           <Timeline list={dates.map((d) => ({ date: d.heading, text: d.text }))} />

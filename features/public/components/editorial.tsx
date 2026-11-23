@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 
 /**
@@ -32,17 +32,17 @@ export function SectionHead({
 }) {
   const dark = tone === "dark";
   return (
-    <div className="reveal grid gap-6 lg:grid-cols-12 lg:gap-6">
-      <div className="lg:col-span-5">
+    <div className="grid gap-6 lg:grid-cols-12 lg:gap-6">
+      <div className="reveal lg:col-span-5">
         <p className={`t-label flex items-center gap-3 ${dark ? "text-ivory/80" : "text-[var(--ink-muted)]"}`}>
           {index ? <span className={dark ? "text-ivory" : "t-index"}>{index}</span> : null}
-          {index ? <span aria-hidden className={`h-px w-6 ${dark ? "bg-ivory/40" : "bg-steel"}`} /> : null}
+          {index ? <span aria-hidden className={`draw-x h-px w-6 ${dark ? "bg-ivory/40" : "bg-copper"}`} /> : null}
           <span>{label}</span>
         </p>
         <H id={headingId} className={`mt-5 ${H === "h1" ? "t-h1" : "t-h2"} ${dark ? "text-white" : "text-indigo"}`}>{title}</H>
       </div>
       {lead || action ? (
-        <div className="flex flex-col justify-end gap-6 lg:col-span-6 lg:col-start-7">
+        <div className="reveal flex flex-col justify-end gap-6 lg:col-span-6 lg:col-start-7">
           {lead ? <div className={`t-lead ${dark ? "text-ivory/85" : "text-[var(--ink-muted)]"}`}>{lead}</div> : null}
           {action}
         </div>
@@ -96,7 +96,7 @@ export const VALUE_CHAIN = ["Capital", "Assets", "Operations", "Markets", "Impac
  * The value chain drawn as a copper line: across the page on tablets and
  * larger, down the side on phones.
  */
-export function ValueChain({ tone = "dark", className = "" }: { tone?: Tone; className?: string }) {
+export function ValueChain({ tone = "dark", className = "", animate = false }: { tone?: Tone; className?: string; animate?: boolean }) {
   const dark = tone === "dark";
   const text = dark ? "text-ivory/85" : "text-graphite";
   const num = dark ? "text-ivory" : "t-index";
@@ -104,9 +104,9 @@ export function ValueChain({ tone = "dark", className = "" }: { tone?: Tone; cla
     <div className={className}>
       <p className="sr-only">The VECTIS value chain: {VALUE_CHAIN.join(", then ")}.</p>
       <ol aria-hidden className="relative hidden grid-cols-5 md:grid">
-        <span className="absolute top-[5px] right-0 left-0 h-px bg-copper" />
+        <span className={`absolute top-[5px] right-0 left-0 h-px bg-copper ${animate ? "enter-draw" : ""}`} />
         {VALUE_CHAIN.map((stage, i) => (
-          <li key={stage} className="relative pt-7">
+          <li key={stage} className={`relative pt-7 ${animate ? "enter-step" : ""}`} style={animate ? ({ "--step": i } as CSSProperties) : undefined}>
             <span className={`absolute top-0 left-0 size-[11px] border border-copper ${i === VALUE_CHAIN.length - 1 ? "bg-copper" : dark ? "bg-indigo" : "bg-ivory"}`} />
             <span className={`t-label block ${num}`}>{String(i + 1).padStart(2, "0")}</span>
             <span className={`mt-1 block font-serif text-xl ${text}`}>{stage}</span>
@@ -115,7 +115,7 @@ export function ValueChain({ tone = "dark", className = "" }: { tone?: Tone; cla
       </ol>
       <ol aria-hidden className="relative space-y-3 border-l border-copper pl-5 md:hidden">
         {VALUE_CHAIN.map((stage, i) => (
-          <li key={stage} className="relative flex items-baseline gap-3">
+          <li key={stage} className={`relative flex items-baseline gap-3 ${animate ? "enter-step" : ""}`} style={animate ? ({ "--step": i } as CSSProperties) : undefined}>
             <span className={`absolute top-[7px] -left-[26px] size-[11px] border border-copper ${i === VALUE_CHAIN.length - 1 ? "bg-copper" : dark ? "bg-indigo" : "bg-ivory"}`} />
             <span className={`t-label ${num}`}>{String(i + 1).padStart(2, "0")}</span>
             <span className={`font-serif text-lg ${text}`}>{stage}</span>
@@ -176,7 +176,7 @@ export function PageHero({
   const t = BAND[tone];
   return (
     <header className={`${t.bg} ${t.dark ? "on-dark" : "border-b border-steel"}`}>
-      <div className="mx-auto w-full max-w-[79rem] px-5 pt-10 pb-14 sm:px-8 sm:pt-14 lg:pb-20">
+      <div className="enter mx-auto w-full max-w-[79rem] px-5 pt-10 pb-14 sm:px-8 sm:pt-14 lg:pb-20">
         <Crumbs items={crumbs} tone={tone} />
         <div className="mt-10 grid gap-8 lg:mt-14 lg:grid-cols-12 lg:gap-6">
           <h1 className={`t-h1 lg:col-span-7 ${t.title}`}>{title}</h1>
@@ -206,7 +206,8 @@ export function Block({
   return (
     <section aria-labelledby={hid} className={tone === "ivory" ? "bg-ivory" : "bg-white"}>
       <div className="mx-auto w-full max-w-[79rem] px-5 py-14 sm:px-8 lg:py-20">
-        <div className="reveal mb-10 border-t border-indigo pt-5">
+        <div className="reveal relative mb-10 pt-5">
+          <span aria-hidden className="draw-x absolute top-0 right-0 left-0 h-px bg-indigo" />
           {label ? <p className="t-label text-[var(--ink-muted)]">{label}</p> : null}
           <h2 id={hid} className="t-h3 mt-2 text-indigo lg:text-[2rem]">
             {title}
@@ -216,4 +217,9 @@ export function Block({
       </div>
     </section>
   );
+}
+
+/** VECTIS › About › page (About is linked only when that page is published). */
+export function aboutCrumbs(aboutPublished: boolean, title: string): Crumb[] {
+  return [{ label: "VECTIS", href: "/" }, { label: "About", href: aboutPublished ? "/about" : undefined }, { label: title }];
 }

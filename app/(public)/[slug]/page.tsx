@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getExtraPage } from "@/features/public/data";
+import { getExtraPage, getSiteMap } from "@/features/public/data";
+import { PageSkeleton } from "@/features/public/components/bits";
+import { aboutCrumbs } from "@/features/public/components/editorial";
 import { pageMetadata } from "@/features/public/metadata";
 import { StandardPage } from "@/features/public/components/page-blocks";
 
@@ -14,14 +16,15 @@ export async function generateMetadata({ params }: PageProps<"/[slug]">): Promis
 
 export default function ExtraPage({ params }: PageProps<"/[slug]">) {
   return (
-    <Suspense fallback={<div className="h-96" />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Extra params={params} />
     </Suspense>
   );
 }
 
 async function Extra({ params }: { params: PageProps<"/[slug]">["params"] }) {
-  const page = await getExtraPage((await params).slug);
+  const [page, site] = await Promise.all([getExtraPage((await params).slug), getSiteMap()]);
   if (!page) notFound();
-  return <StandardPage page={page} />;
+  // Extra pages sit under About in the menu.
+  return <StandardPage page={page} crumbs={aboutCrumbs(site.core.has("about"), page.title)} />;
 }

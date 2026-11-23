@@ -15,13 +15,13 @@ export default async function ProjectsPage() {
   const groups = order.map((s) => ({ s, list: projects.filter((p) => p.project_status === s) })).filter((g) => g.list.length);
   return (
     <>
-      <PageHeading eyebrow="Projects" title="Projects" />
+      <PageHeading title="Projects" intro="Projects across the VECTIS businesses." />
       {groups.length ? (
         groups.map((g, n) => (
           <Section key={g.s} title={PROJECT_STATUS_LABEL[g.s]} tone={n % 2 ? "white" : "plain"}>
-            <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
               {g.list.map((p) => (
-                <li key={p.id}>
+                <li key={p.id} className="reveal">
                   <ProjectCard p={p} />
                 </li>
               ))}

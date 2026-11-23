@@ -133,7 +133,23 @@ export const TEMPLATES: Record<string, Template> = {
   governance: {
     label: "Governance",
     description: "How VECTIS is governed.",
-    sections: [{ title: "Content", fields: [intro, body, image] }],
+    sections: [
+      { title: "Content", fields: [intro, body, image] },
+      {
+        title: "Accountability loop",
+        fields: [
+          {
+            key: "loop",
+            kind: "items",
+            label: "Stages of the loop, in order",
+            itemLabel: "stage",
+            headingLabel: "Stage",
+            textLabel: "What happens here (optional)",
+            maxItems: 8,
+          },
+        ],
+      },
+    ],
   },
   leadership: {
     label: "Leadership",
