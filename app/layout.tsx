@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import "@fontsource-variable/ibm-plex-sans";
 import "@fontsource-variable/source-serif-4";
+import "@fontsource-variable/fraunces/opsz.css";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
 import "./globals.css";
 
 // Fonts are self-hosted from npm packages (no request to Google at build or run time).

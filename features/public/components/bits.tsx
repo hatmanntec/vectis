@@ -5,7 +5,7 @@ import type { Doc, Img } from "../data";
 
 /** Page-width container. */
 export function Container({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`mx-auto w-full max-w-6xl px-5 sm:px-8 ${className}`}>{children}</div>;
+  return <div className={`mx-auto w-full max-w-[79rem] px-5 sm:px-8 ${className}`}>{children}</div>;
 }
 
 /** An image from the media library (already optimised on upload). */

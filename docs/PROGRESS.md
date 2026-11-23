@@ -20,7 +20,39 @@ The running record of what has been built. Newest milestone first.
 | M11: Final CMS review and test pass | **Done** (22 Nov 2026), no database update. **The CMS is complete.** |
 | Phases 4–7: Public website, SEO, accessibility, launch readiness | **Done** (23 Nov 2026), no database update |
 | Initial website content | **Ready** (23 Nov 2026): database update 0018, applied with `db push` |
-| Still to enter in the CMS | Companies invested in, leadership, projects, news, contact details, photos |
+| Initial investments | **Ready** (23 Nov 2026): database update 0019 (Pillar Oil, Akata Energy; names only) |
+| Redesign, Stage 1: Foundations | **Done** (23 Nov 2026): fonts, design tokens, header with menus, footer with logo |
+| Redesign, Stages 2–6 | To do: home, businesses, investments + industries, inner pages, quality pass |
+| Still to enter in the CMS | Leadership, projects, news, contact details, licensed stock photos |
+
+## Redesign Stage 1: Foundations (23 Nov 2026)
+
+The public website's design system, header and footer. **The CMS and its look are unchanged.** One database update
+ships with this stage: `0019_initial_investments.sql` (Pillar Oil and Akata Energy, names only).
+
+- **Fonts:** Fraunces (headings, upright, wonky letters off), IBM Plex Sans (text), IBM Plex Mono (labels, index
+  numbers, dates). All self-hosted from npm. The CMS keeps Source Serif 4: the public layout adds the `site` class,
+  which switches the serif to Fraunces only there.
+- **Design tokens** (`app/globals.css`, under `.site`): square corners, Steel Mist hairlines, a copper focus ring on
+  every link and button, the type scale (`t-hero`, `t-h1`, `t-h2`, `t-h3`, `t-lead`, `t-body`, `t-label`), a
+  12-column grid (`grid-12`, 1200 px, 24 px gutters) and section spacing (`section-y`, 64/96/128 px).
+- **Scroll reveal:** add `className="reveal"` to fade a block up 12 px as it scrolls into view
+  (`features/public/components/reveal.tsx`). Nothing is hidden without JavaScript, and nothing moves when the
+  device is set to reduce motion.
+- **Business clusters** (`features/public/clusters.ts`): the profile's five clusters, each defined by its sectors.
+  A business joins the cluster of its **main sector** (set in the CMS). Vectis Sports' main sector (Sports and
+  recreation) isn't placed in a cluster by the profile, so it shows under "Other businesses" until you decide.
+- **Header:** a thin "Since 1956 · Nigeria" line with a Contact link, then the logo and the menu. It stays at the
+  top and slims down on scroll. **About** (Overview, Corporate History, Governance, Leadership, extra pages such
+  as the Foundation) and **Businesses** (every published business, by cluster) open full-width panels: on hover,
+  click or tap, and by keyboard (Enter, arrows, Home/End, Esc). Links still appear only for published content.
+- **Phone and tablet menu:** full screen, groups as accordions, 48 px+ targets, focus kept inside, Esc to close.
+- **Footer:** on Mineral Ivory, with the real logo on a white panel, contact details, a sitemap in columns and
+  "Est. 1956 · Nigeria".
+
+**Tested:** public site 80 checks (menus by mouse, keyboard and phone; footer logo; axe accessibility scan),
+CMS suites (auth 23, M4 45, M5 38, M6 34, M7 43, M8 37, M9 45, M10 52) and the CMS accessibility scan (30 screens)
+all pass. Screenshots at 375, 768, 1024 and 1440 px with the real content: no sideways scrolling on 11 pages.
 
 ## Initial website content (23 Nov 2026)
 
