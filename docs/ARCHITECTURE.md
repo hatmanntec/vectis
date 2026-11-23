@@ -54,3 +54,13 @@ Public sign-up is disabled in Supabase; administrators are added only through th
   - `prefers-reduced-motion: reduce` switches every reveal and entrance off.
   - Why not Motion for React: the public pages are server components; Motion would turn many of them into client
     components, add a library to every page, and write hidden starting styles into the server HTML.
+
+### Recovering from a stale page copy
+
+Next.js fetches pages in the background so menu clicks feel instant. If an
+administrator publishes or changes a page in between, the copy the browser put
+aside no longer matches what the server now sends, and React abandons that
+page. `app/(public)/error.tsx` catches this, asks Next.js to fetch the page
+again, and falls back to a full page load. A marker in the tab's own storage
+stops it looping. The visitor sees a short "One moment" only if both attempts
+fail.

@@ -4,46 +4,48 @@ import { cn } from "@/lib/utils";
 /**
  * The official VECTIS logo.
  *
- * This is the ONLY component that references the logo file. The file in
- * public/brand/vectis-logo.jpg is the client's master asset, byte-for-byte as
- * supplied: it must never be redrawn, recoloured, cropped or stretched.
+ * This is the ONLY component that references the logo files. The artwork is
+ * the client's master asset and must never be redrawn, recoloured, stretched
+ * or rearranged.
  *
- * The master is a 1200 x 896 JPEG on a solid white background. Until an
- * approved transparent version is supplied, the logo is always shown on a
- * white panel so the white background reads as intentional rather than as a
- * box sitting on Mineral Ivory or Midnight Indigo.
+ * - public/brand/vectis-logo.jpg is the master as supplied, byte for byte.
+ * - public/brand/vectis-logo.png is the same artwork with its white
+ *   background made transparent, so the logo can sit directly on Mineral
+ *   Ivory or white with no panel behind it. The artwork is untouched: it is
+ *   drawn in Midnight Indigo (#0D115A), the brand's own colour.
+ * - public/brand/vectis-emblem.png is the diamond-and-globe mark on its own,
+ *   as the brand guide shows for the browser tab icon and small square uses.
  *
- * Size it by width only; the height follows automatically, so the proportions
- * can never be distorted.
+ * Size it by width only; the height follows automatically, so the
+ * proportions can never be distorted.
  */
 
-const LOGO_SRC = "/brand/vectis-logo.jpg";
-const LOGO_WIDTH = 1200;
-const LOGO_HEIGHT = 896;
+const FULL = { src: "/brand/vectis-logo.png", width: 855, height: 541 };
+const EMBLEM = { src: "/brand/vectis-emblem.png", width: 370, height: 370 };
 
 type LogoProps = {
   /** Rendered width in CSS pixels. Height is derived from the original ratio. */
   width: number;
+  /** The diamond-and-globe mark on its own, without the name. */
+  emblem?: boolean;
   /** Load immediately (use for logos visible without scrolling). */
   priority?: boolean;
   className?: string;
 };
 
-export function Logo({ width, priority = false, className }: LogoProps) {
-  const height = Math.round((width * LOGO_HEIGHT) / LOGO_WIDTH);
-
+export function Logo({ width, emblem = false, priority = false, className }: LogoProps) {
+  const art = emblem ? EMBLEM : FULL;
+  const height = Math.round((width * art.height) / art.width);
   return (
-    <span className={cn("inline-block bg-white leading-none", className)}>
-      <Image
-        src={LOGO_SRC}
-        alt="VECTIS — Est. 1956"
-        width={LOGO_WIDTH}
-        height={LOGO_HEIGHT}
-        priority={priority}
-        sizes={`${width}px`}
-        style={{ width, height }}
-        className="block"
-      />
-    </span>
+    <Image
+      src={art.src}
+      alt={emblem ? "VECTIS" : "VECTIS — Est. 1956"}
+      width={art.width}
+      height={art.height}
+      priority={priority}
+      sizes={`${width}px`}
+      style={{ width, height }}
+      className={cn("block", className)}
+    />
   );
 }

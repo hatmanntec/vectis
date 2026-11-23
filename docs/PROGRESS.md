@@ -647,3 +647,30 @@ Client decision: two-step verification (authenticator app) removed entirely.
 
 - Corporate profile PDF: needed before Phase 4.
 - Approved transparent logo (SVG or PNG) and a white version for dark backgrounds.
+
+## Logo presentation and page-load recovery
+
+**Public website.**
+
+- The logo no longer sits on a white panel. `public/brand/vectis-logo.png`
+  is the supplied artwork with its white background made transparent, so the
+  mark sits directly on Mineral Ivory or white. The master
+  `public/brand/vectis-logo.jpg` is untouched, byte for byte, and the artwork
+  itself is not redrawn or recoloured: it is the brand's own Midnight Indigo.
+- `public/brand/vectis-emblem.png` is the diamond-and-globe mark on its own,
+  used for the browser tab icon, as the brand guide shows.
+- `components/brand/logo.tsx` is still the only file that refers to the logo
+  files. Sizing is by width only, so the proportions cannot be distorted.
+- The white box and hairline behind the footer logo have been removed.
+
+**Page-load recovery.** `app/(public)/error.tsx` now catches the rare case
+where a visitor's browser holds a copy of a page from before an administrator
+published or changed it, and the two no longer match. Previously the visitor
+saw "This page couldn't load" and had to reload by hand. The page now fetches
+itself again automatically, and only shows a message if that also fails.
+
+A note for testing: a build made while the database is unreachable bakes
+"page not found" into every page, and the website then appears to break on
+every menu click. `run_e2e.sh` seeds the database before building for this
+reason. This is not a condition that occurs on Vercel, where the database is
+always reachable at build time.

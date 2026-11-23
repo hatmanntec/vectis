@@ -9,6 +9,14 @@ import { PageBody, text } from "@/features/public/components/page-blocks";
 import { Container, Nothing, PublicImage } from "@/features/public/components/bits";
 import { PageHero } from "@/features/public/components/editorial";
 
+/**
+ * This page reads the industry filter from the web address. Next.js would otherwise try to
+ * change pages instantly, before that part of the address is known, which can
+ * leave the page showing "This page couldn't load". Waiting for the page to be
+ * ready costs a moment on the change and always works.
+ */
+export const instant = false;
+
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getCorePage("businesses");
   return page ? pageMetadata({ title: page.title, seoTitle: page.seoTitle, description: page.seoDescription, image: page.ogImage, path: "/businesses" }) : {};

@@ -12,17 +12,15 @@ import { isActive, isGroup, groupLinks, type NavGroup, type NavItem } from "./na
  * open panel, Esc closes it, and the page behind doesn't scroll.
  */
 export function MobileMenu({ items, logo, utility }: { items: NavItem[]; logo: ReactNode; utility?: string }) {
-  const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const [lastPath, setLastPath] = useState(pathname);
+  // Remember which page the menu was opened on, so moving to another page
+  // closes it without changing any state while the page is rendering.
+  const [openedOn, setOpenedOn] = useState<string | null>(null);
+  const open = openedOn === pathname;
+  const setOpen = (wanted: boolean) => setOpenedOn(wanted ? pathname : null);
   const panel = useRef<HTMLDivElement>(null);
   const opener = useRef<HTMLButtonElement>(null);
   const closer = useRef<HTMLButtonElement>(null);
-  // Close the menu after navigating.
-  if (pathname !== lastPath) {
-    setLastPath(pathname);
-    setOpen(false);
-  }
 
   useEffect(() => {
     if (!open) return;
@@ -32,7 +30,7 @@ export function MobileMenu({ items, logo, utility }: { items: NavItem[]; logo: R
     document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setOpen(false);
+        setOpenedOn(null);
         return;
       }
       if (e.key !== "Tab" || !panel.current) return;

@@ -42,11 +42,11 @@ export async function SiteFooter() {
     <footer className="mt-auto border-t border-steel bg-ivory text-graphite">
       <Container className="grid gap-12 py-16 lg:grid-cols-12 lg:gap-6 lg:py-20">
         <div className="lg:col-span-4">
-          <Link href="/" aria-label={`${settings.siteName}: home`} className="inline-block bg-white p-4 shadow-[0_0_0_1px_var(--vectis-steel)]">
+          <Link href="/" aria-label={`${settings.siteName}: home`} className="inline-block">
             {settings.logo ? (
               <PublicImage img={{ ...settings.logo, alt: settings.siteName }} className="h-20 w-auto" />
             ) : (
-              <Logo width={112} />
+              <Logo width={132} />
             )}
           </Link>
           {settings.tagline ? <p className="mt-6 max-w-sm text-[0.9375rem] leading-relaxed text-[var(--ink-muted)]">{settings.tagline}</p> : null}

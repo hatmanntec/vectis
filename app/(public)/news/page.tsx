@@ -7,6 +7,14 @@ import { Container, Nothing, PageHeading } from "@/features/public/components/bi
 import { NewsCard } from "@/features/public/components/cards";
 import { NEWS_TYPES, NEWS_TYPE_LABEL } from "@/features/news/labels";
 
+/**
+ * This page reads the kind filter and page number from the web address. Next.js would otherwise try to
+ * change pages instantly, before that part of the address is known, which can
+ * leave the page showing "This page couldn't load". Waiting for the page to be
+ * ready costs a moment on the change and always works.
+ */
+export const instant = false;
+
 export async function generateMetadata(): Promise<Metadata> {
   return pageMetadata({ title: "News", path: "/news" });
 }

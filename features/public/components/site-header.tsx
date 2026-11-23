@@ -21,7 +21,7 @@ export async function SiteHeader() {
       {settings.logo ? (
         <PublicImage img={{ ...settings.logo, alt: settings.siteName }} eager className="h-14 w-auto" />
       ) : (
-        <Logo width={84} priority />
+        <Logo width={88} priority />
       )}
     </Link>
   );

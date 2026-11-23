@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: "VECTIS — a diversified Nigerian business organisation. Est. 1956.",
   // Browser tab icon: the master logo file itself, unaltered. A purpose-made
   // icon can replace it once the brand owner supplies one.
-  icons: { icon: [{ url: "/brand/vectis-logo.jpg", type: "image/jpeg" }] },
+  icons: { icon: [{ url: "/brand/vectis-emblem.png", type: "image/png" }] },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

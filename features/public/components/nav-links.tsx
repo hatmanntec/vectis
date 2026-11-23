@@ -30,13 +30,12 @@ const groupPart = (active: boolean) =>
   `flex h-11 items-center text-[0.9375rem] font-medium transition-colors duration-200 ${active ? "text-indigo" : "text-graphite hover:text-indigo"}`;
 
 function DesktopNav({ items, pathname }: { items: NavItem[]; pathname: string }) {
-  const [open, setOpen] = useState<string | null>(null);
-  const [lastPath, setLastPath] = useState(pathname);
-  // Close any open panel after navigating.
-  if (pathname !== lastPath) {
-    setLastPath(pathname);
-    setOpen(null);
-  }
+  // Remember which page a panel was opened on, so moving to another page
+  // closes it without changing any state while the page is rendering.
+  const [opened, setOpened] = useState<{ label: string; path: string } | null>(null);
+  const open = opened && opened.path === pathname ? opened.label : null;
+  const setOpen = (label: string, wanted: boolean) =>
+    setOpened((cur) => (wanted ? { label, path: pathname } : cur && cur.label === label ? null : cur));
   return (
     <ul className="flex items-center">
       {items.map((item) =>
@@ -46,7 +45,7 @@ function DesktopNav({ items, pathname }: { items: NavItem[]; pathname: string })
             group={item}
             pathname={pathname}
             open={open === item.label}
-            onOpenChange={(o) => setOpen((cur) => (o ? item.label : cur === item.label ? null : cur))}
+            onOpenChange={(o) => setOpen(item.label, o)}
           />
         ) : (
           <li key={item.href}>
