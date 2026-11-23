@@ -152,7 +152,7 @@ function Dropdown({
       >
         <div className="mx-auto grid w-full max-w-[79rem] grid-cols-12 gap-6 px-8 py-10">
           <div className="col-span-3 border-r border-steel/60 pr-6">
-            <p className="t-label text-copper" aria-hidden>
+            <p className="t-label t-index" aria-hidden>
               Menu
             </p>
             <p className="mt-3 font-serif text-3xl text-indigo">{group.label}</p>
@@ -173,7 +173,7 @@ function Dropdown({
               <div key={col.title ?? i}>
                 {col.title ? (
                   <p className="mb-3 flex gap-2 border-b border-steel/60 pb-2 t-label text-[var(--ink-muted)]">
-                    {col.index ? <span className="text-copper">{col.index}</span> : null}
+                    {col.index ? <span className="t-index">{col.index}</span> : null}
                     <span>{col.title}</span>
                   </p>
                 ) : null}

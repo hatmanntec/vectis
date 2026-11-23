@@ -169,20 +169,21 @@ export async function getSiteMap() {
   cacheLife("site");
   cacheTag("site");
   const client = db();
-  const count = async (table: "projects" | "news" | "investments" | "leadership") =>
+  const count = async (table: "projects" | "news" | "investments" | "leadership" | "sectors") =>
     (await client.from(table).select("id", { count: "exact", head: true })).count ?? 0;
-  const [{ data: pages }, projects, news, investments, leadership] = await Promise.all([
+  const [{ data: pages }, projects, news, investments, leadership, sectors] = await Promise.all([
     client.from("pages").select("page_key, slug, title, is_system, updated_at"),
     count("projects"),
     count("news"),
     count("investments"),
     count("leadership"),
+    count("sectors"),
   ]);
   const core = new Set((pages ?? []).filter((p) => p.is_system).map((p) => p.page_key));
   return {
     core,
     extra: (pages ?? []).filter((p) => !p.is_system && p.slug).map((p) => ({ slug: p.slug!, title: p.title })),
-    counts: { projects, news, investments, leadership },
+    counts: { projects, news, investments, leadership, sectors },
   };
 }
 

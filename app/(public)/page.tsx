@@ -167,7 +167,7 @@ export default async function HomePage() {
           <Container className="grid gap-10 lg:grid-cols-12 lg:gap-6">
             <div className="reveal lg:col-span-5">
               <p className="t-label flex items-center gap-3 text-[var(--ink-muted)]">
-                <span className="text-copper">{next()}</span>
+                <span className="t-index">{next()}</span>
                 <span aria-hidden className="h-px w-6 bg-steel" />
                 <span>Heritage</span>
               </p>
@@ -274,22 +274,19 @@ export default async function HomePage() {
               index={next()}
               label="Industries"
               title={`${sectors.length === 15 ? "Fifteen" : sectors.length} sectors, one mandate`}
+              action={<ArrowLink href="/industries">All industries</ArrowLink>}
             />
             <ol className="mt-12 grid border-t border-indigo md:grid-cols-2 md:gap-x-6 lg:mt-16">
               {sectors.map((s, i) => {
                 const inSector = bySector.get(s.slug) ?? [];
                 return (
                   <li key={s.id} className="reveal grid grid-cols-[3rem_minmax(0,1fr)] gap-x-2 border-b border-steel py-5">
-                    <span className="t-label pt-1.5 text-copper">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="t-label pt-1.5 t-index">{String(i + 1).padStart(2, "0")}</span>
                     <div>
                       <h3 className="font-serif text-xl leading-snug text-indigo">
-                        {has("businesses") && inSector.length ? (
-                          <Link href={`/businesses?sector=${s.slug}`} className="underline-offset-4 hover:underline">
-                            {s.name}
-                          </Link>
-                        ) : (
-                          s.name
-                        )}
+                        <Link href={`/industries#${s.slug}`} className="underline-offset-4 hover:underline">
+                          {s.name}
+                        </Link>
                       </h3>
                       {inSector.length ? (
                         <p className="mt-1 text-sm leading-relaxed text-[var(--ink-muted)]">{inSector.map((b) => b.name).join(" · ")}</p>

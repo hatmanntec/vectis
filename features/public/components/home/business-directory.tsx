@@ -31,7 +31,7 @@ export function BusinessDirectory({ groups }: { groups: DirectoryGroup[] }) {
           {groups.map((g) => (
             <div key={g.name} className="mb-10 last:mb-0">
               <p className="t-label flex gap-2 border-b border-steel pb-3 text-[var(--ink-muted)]">
-                {g.index ? <span className="text-copper">{g.index}</span> : null}
+                {g.index ? <span className="t-index">{g.index}</span> : null}
                 <span>{g.name}</span>
               </p>
               <ul>
@@ -82,7 +82,7 @@ function Detail({ item, group }: { item: DirectoryGroup["items"][number]; group:
   return (
     <div key={item.slug}>
       <p className="t-label flex gap-2 text-[var(--ink-muted)]">
-        {group.index ? <span className="text-copper">{group.index}</span> : null}
+        {group.index ? <span className="t-index">{group.index}</span> : null}
         <span>{group.name}</span>
       </p>
       {item.logo ? <PublicImage img={item.logo} className="mt-8 h-14 w-auto object-contain" /> : null}
@@ -118,7 +118,7 @@ function Accordion({ group, defaultOpen }: { group: DirectoryGroup; defaultOpen:
         className="flex min-h-16 w-full items-center justify-between gap-4 py-4 text-left"
       >
         <span>
-          {group.index ? <span className="t-label mr-3 text-copper">{group.index}</span> : null}
+          {group.index ? <span className="t-label mr-3 t-index">{group.index}</span> : null}
           <span className="font-serif text-xl text-indigo">{group.name}</span>
         </span>
         <ChevronDown aria-hidden className={`size-5 shrink-0 text-indigo transition-transform duration-200 ${open ? "rotate-180" : ""}`} />

@@ -141,7 +141,7 @@ function Accordion({ group, pathname }: { group: NavGroup; pathname: string }) {
           <div key={col.title ?? i} className={col.title ? "mt-3" : ""}>
             {col.title ? (
               <p className="flex gap-2 pt-2 pb-1 t-label text-[var(--ink-muted)]">
-                {col.index ? <span className="text-copper">{col.index}</span> : null}
+                {col.index ? <span className="t-index">{col.index}</span> : null}
                 <span>{col.title}</span>
               </p>
             ) : null}

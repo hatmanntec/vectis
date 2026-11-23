@@ -17,6 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   };
   const out: MetadataRoute.Sitemap = [];
   for (const [key, path] of Object.entries(core)) if (site.core.has(key)) out.push({ url: `${base}${path}` });
+  if (site.counts.sectors) out.push({ url: `${base}/industries` });
   if (site.counts.projects) out.push({ url: `${base}/projects` });
   if (site.counts.news) out.push({ url: `${base}/news` });
   for (const p of site.extra) out.push({ url: `${base}/${p.slug}` });

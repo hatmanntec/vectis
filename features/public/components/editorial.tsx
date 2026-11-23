@@ -35,7 +35,7 @@ export function SectionHead({
     <div className="reveal grid gap-6 lg:grid-cols-12 lg:gap-6">
       <div className="lg:col-span-5">
         <p className={`t-label flex items-center gap-3 ${dark ? "text-ivory/80" : "text-[var(--ink-muted)]"}`}>
-          {index ? <span className={dark ? "text-ivory" : "text-copper"}>{index}</span> : null}
+          {index ? <span className={dark ? "text-ivory" : "t-index"}>{index}</span> : null}
           {index ? <span aria-hidden className={`h-px w-6 ${dark ? "bg-ivory/40" : "bg-steel"}`} /> : null}
           <span>{label}</span>
         </p>
@@ -99,7 +99,7 @@ export const VALUE_CHAIN = ["Capital", "Assets", "Operations", "Markets", "Impac
 export function ValueChain({ tone = "dark", className = "" }: { tone?: Tone; className?: string }) {
   const dark = tone === "dark";
   const text = dark ? "text-ivory/85" : "text-graphite";
-  const num = dark ? "text-ivory" : "text-copper";
+  const num = dark ? "text-ivory" : "t-index";
   return (
     <div className={className}>
       <p className="sr-only">The VECTIS value chain: {VALUE_CHAIN.join(", then ")}.</p>

@@ -165,6 +165,10 @@
   .t-body { font-size: clamp(1rem, 0.97rem + 0.12vw, 1.0625rem); line-height: 1.65; }
   .t-label { font-family: var(--font-mono); font-weight: 500; font-size: 0.75rem; line-height: 1.4; letter-spacing: 0.14em; text-transform: uppercase; }
 
+  /* Index numbers (01, 02 …). Indigo, not copper: small copper text on ivory
+     falls below the 4.5:1 contrast minimum. Copper stays for rules and marks. */
+  .t-index { color: var(--vectis-indigo); }
+
   /* 12-column grid, 1200 px wide, 24 px gutters. */
   .grid-12 { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 1.5rem; }
 

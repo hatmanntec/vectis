@@ -24,8 +24,31 @@ The running record of what has been built. Newest milestone first.
 | Redesign, Stage 1: Foundations | **Done** (23 Nov 2026): fonts, design tokens, header with menus, footer with logo |
 | Redesign, Stage 2: Home page | **Done** (23 Nov 2026), no database update |
 | Redesign, Stage 3: Businesses | **Done** (23 Nov 2026), no database update |
-| Redesign, Stages 4–6 | To do: investments + industries, inner pages, quality pass |
+| Redesign, Stage 4: Investments and Industries | **Done** (23 Nov 2026), no database update |
+| Redesign, Stages 5–6 | To do: inner pages, quality pass |
 | Still to enter in the CMS | Leadership, projects, news, contact details, licensed stock photos |
+
+## Redesign Stage 4: Investments and Industries (23 Nov 2026)
+
+**No CMS or database change.**
+
+- **Investments** (`/investment-philosophy`): page band, the philosophy text, the principles as four numbered
+  columns, the full relationship map on indigo (with its text version), then one entry per investment: investor,
+  company invested in, nature and status in VECTIS's words, summary and logo when entered.
+- **Investment profile** (`/investments/<name>`): an indigo band with the lineage and a drawing of the relationship:
+  the VECTIS business in a solid box, the company invested in in a dashed box, the nature on the line between. Then
+  the description (when entered) and a facts rail. The company invested in is never linked as a VECTIS business.
+- **Industries** (new, `/industries`): every published sector with its description, picture (when uploaded) and the
+  VECTIS businesses in it, plus a "jump to" index. Each sector has its own anchor (`/industries#oil-and-gas`), used
+  by the home page. Added to the menu (between Businesses and Investments) and the sitemap, shown only when at
+  least one sector is published. Its title and one-line lead are fixed in the code, since no CMS page exists for it.
+- **Contrast fix:** small index numbers (01, 02 …) are now indigo instead of copper, which falls below the 4.5:1
+  minimum on ivory. Copper stays for rules, lines and marks.
+
+**Tested:** public site 90 checks (4 new: map text version, solid/dashed investment drawing, Industries content,
+Industries in the sitemap; the accessibility scan now covers /industries), all CMS suites and both accessibility
+scans pass, plus an axe scan of six redesigned pages with the real content (no issues). Pages at 375, 768, 1024
+and 1440 px: no sideways scrolling, no browser errors.
 
 ## Redesign Stage 3: Businesses (23 Nov 2026)
 

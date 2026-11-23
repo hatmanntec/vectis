@@ -38,7 +38,7 @@ function Row({ row, open, onToggle, onHover }: { row: ClusterRow; open: boolean;
   const expandable = row.businesses.length > 0;
   const head = (
     <>
-      <span className="t-label pt-2 text-copper lg:col-span-1">{row.index}</span>
+      <span className="t-label pt-2 t-index lg:col-span-1">{row.index}</span>
       <span className="font-serif text-[1.625rem] leading-tight text-indigo lg:col-span-4 lg:text-[2rem]">{row.heading}</span>
       <span className="t-body text-[var(--ink-muted)] lg:col-span-5 lg:pt-1.5">{row.text}</span>
     </>

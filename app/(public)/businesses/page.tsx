@@ -103,7 +103,7 @@ async function Directory({ searchParams }: { searchParams: PageProps<"/businesse
             <section key={cluster.key} id={cluster.key} aria-labelledby={`cluster-${cluster.key}`} className="scroll-mt-32 lg:grid lg:grid-cols-12 lg:gap-6">
               <div className="mb-6 lg:col-span-4 lg:mb-0">
                 <div className="lg:sticky lg:top-32">
-                  {cluster.key !== "other" ? <p className="t-label text-copper">{cluster.index}</p> : null}
+                  {cluster.key !== "other" ? <p className="t-label t-index">{cluster.index}</p> : null}
                   <h2 id={`cluster-${cluster.key}`} className="t-h3 mt-2 text-indigo">
                     {cluster.name}
                   </h2>

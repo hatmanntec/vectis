@@ -54,6 +54,7 @@ export function mainNav(site: SiteMap, businesses: CompanyCard[]): NavItem[] {
           columns: businessColumns,
         },
       ),
+    site.counts.sectors > 0 && { href: "/industries", label: "Industries" },
     site.core.has("investment-philosophy") && { href: "/investment-philosophy", label: "Investments" },
     site.counts.projects > 0 && { href: "/projects", label: "Projects" },
     site.counts.news > 0 && { href: "/news", label: "News" },
