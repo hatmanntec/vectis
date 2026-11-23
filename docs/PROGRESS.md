@@ -30,6 +30,22 @@ The running record of what has been built. Newest milestone first.
 | Scroll-reveal motion system | **Done** (23 Nov 2026) |
 | Still to enter in the CMS | Leadership, projects, news, contact details, licensed stock photos |
 
+## Fix: content stayed hidden after moving between pages (23 Nov 2026)
+
+**The fault.** Moving to another page from the menu left most of the new page invisible, however far you scrolled.
+Only a full refresh brought it back.
+
+**The cause.** The scroll reveals marked each element as "already being watched". Moving between pages without a
+refresh lets the browser reuse the same elements for the new page's content, and those reused elements still
+carried the mark, so the watcher skipped them and they were never revealed.
+
+**The fix.** The mark is gone. On every pass the watcher simply watches everything still waiting to be revealed
+(watching the same element twice does nothing), so reused elements are always picked up. Changes that arrive
+together are now handled in a single pass per frame rather than one at a time.
+
+Tested: from the home page, scrolling down and then moving to Our Businesses, About, Projects and News in turn,
+nothing visible is left hidden, on both a desktop and a phone screen. Added to the test suite as check 13g.
+
 ## "On this page" index beside the text (23 Nov 2026)
 
 Inner pages left a wide empty column beside the main text, which made short pages look unfinished. Now:

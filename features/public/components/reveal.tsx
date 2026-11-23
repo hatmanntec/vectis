@@ -3,7 +3,8 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
-const SELECTOR = ".reveal:not([data-revealed]), .reveal-image:not([data-revealed])";
+/** Everything still waiting to be revealed. */
+const WAITING = ".reveal:not([data-revealed]), .reveal-image:not([data-revealed])";
 /** Gap between items that come into view together (cards in a row, a heading and its text). */
 const STEP_MS = 90;
 /** The longest any item waits, so long lists never feel slow. */
@@ -21,7 +22,10 @@ const MAX_DELAY_MS = 450;
  *   is shown straight away, so content never flickers or goes missing
  *   without JavaScript. Search engines receive the full page as normal.
  * - With "reduce motion" switched on, CSS shows everything immediately.
- * - It looks again after each page change and when new content streams in.
+ * - It looks again after each page change and whenever content streams in.
+ *   Nothing is marked as "already handled", because moving between pages can
+ *   reuse the same elements for new content; every element still waiting is
+ *   watched again on each pass (watching one twice does nothing).
  */
 export function RevealObserver() {
   const pathname = usePathname();
@@ -37,7 +41,7 @@ export function RevealObserver() {
     };
 
     if (!("IntersectionObserver" in window)) {
-      document.querySelectorAll(SELECTOR).forEach((el) => show(el));
+      document.querySelectorAll(WAITING).forEach((el) => show(el));
       return;
     }
 
@@ -55,32 +59,43 @@ export function RevealObserver() {
     );
 
     const watch = () => {
+      // On the very first pass nothing is hidden yet, so whatever is already
+      // on screen is simply shown rather than animated in.
+      const first = !document.documentElement.classList.contains("reveal-ready");
       const height = window.innerHeight;
-      document.querySelectorAll(SELECTOR).forEach((el) => {
-        if (el.hasAttribute("data-watched")) return;
-        el.setAttribute("data-watched", "");
+      for (const el of document.querySelectorAll(WAITING)) {
         const r = el.getBoundingClientRect();
-        // Already on screen before the reveals switched on: show it as it is.
-        if (!document.documentElement.classList.contains("reveal-ready") && r.top < height && r.bottom > 0) show(el);
+        if (first && r.top < height && r.bottom > 0) show(el);
         else io.observe(el);
-      });
+      }
     };
 
-    // Wait for the web fonts, so "already on screen" is judged on the final
-    // layout; until then nothing is hidden.
     let cancelled = false;
-    const mo = new MutationObserver(() => watch());
+    let queued = 0;
+    // Content that streams in later (filtered lists, profiles) is picked up
+    // too; several changes at once are handled in a single pass.
+    const mo = new MutationObserver(() => {
+      if (queued) return;
+      queued = requestAnimationFrame(() => {
+        queued = 0;
+        if (!cancelled) watch();
+      });
+    });
+
     const start = () => {
       if (cancelled) return;
       watch();
       document.documentElement.classList.add("reveal-ready");
-      // Content that streams in later (filtered lists, profiles) is picked up too.
       mo.observe(document.body, { childList: true, subtree: true });
     };
+    // Wait for the web fonts, so "already on screen" is judged on the final
+    // layout; until then nothing is hidden.
     if (document.fonts?.status === "loaded") start();
     else document.fonts.ready.then(start, start);
+
     return () => {
       cancelled = true;
+      if (queued) cancelAnimationFrame(queued);
       io.disconnect();
       mo.disconnect();
     };
