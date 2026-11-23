@@ -694,3 +694,17 @@ and the client's to confirm before they appear in public:
 
 Both pages describe the companies invested in, never VECTIS ownership or
 control of them.
+
+## Pillar Oil: fuller profile (migration 0022)
+
+The short profile written in 0021 is replaced with a full one, taken from
+the company's own website: the three upstream licences in detail (PML 17,
+OPL 233, PPL 201), the three-phase midstream gas development, the OPAC
+refinery stake downstream, safety and environment, and host-community work.
+
+Figures appear here but not on Akata Energy's page because Pillar Oil has
+already published them itself. They are attributed to the company
+throughout, never asserted by VECTIS.
+
+0022 is a separate migration rather than an edit to 0021, so it applies
+correctly whether or not 0021 has already been pushed.
