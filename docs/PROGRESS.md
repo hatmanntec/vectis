@@ -708,3 +708,22 @@ throughout, never asserted by VECTIS.
 
 0022 is a separate migration rather than an edit to 0021, so it applies
 correctly whether or not 0021 has already been pushed.
+
+## Akata Energy: full profile (migration 0023)
+
+The client confirmed that the figures in Akata Energy's December 2023
+company and asset profile may be published, so 0023 replaces the shorter
+version written in 0021 with the full one: the equity interests in each
+field, well histories and test results, the reserve and volume estimates,
+the 40,000-50,000 bopd cluster ambition, and the Equatorial Guinea block
+EG 23 bid.
+
+Three inconsistencies in the source document are handled rather than
+copied: the Meta field's P50 and P90 labels are reversed in the document,
+so both figures are given without those labels and credited to Gaffney
+Cline Associates; Mahin's stated discovery year (1986) and Mahin-1's
+drilling year (1968) are both given as the document has them; and the
+"ten (9)" sands on Mahin-2 is rendered as nine, which matches the list.
+One unit is corrected: API gravity is given in degrees, not per cent.
+
+A closing line dates the figures to the December 2023 profile.
